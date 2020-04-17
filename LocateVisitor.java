@@ -1,8 +1,15 @@
 import syntaxtree.*;
 import visitor.GJDepthFirst;
+import java.util.*;
 
 public class LocateVisitor extends GJDepthFirst<Object, Object>{
 
+	/* Creating our Symbol Table */
+	public SymbolTable st;
+
+	public LocateVisitor(){
+		st = new SymbolTable();
+	}
 
 	/**
      * f0 -> "class"
@@ -26,17 +33,19 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
      */
     public Object visit(MainClass n, Object argu) {
 
+
 		String className = n.f1.accept(this, argu).toString();
+
 
 		String[] methodIdTypes = new String[1];
 		String[] methodIdNames = new String[1];
-
 		methodIdTypes[0] = "String[]";
 		methodIdNames[0] = n.f11.accept(this, argu).toString();
 
+
 		String[] varTypes = null;
 		String[] varNames = null;
-		if (n.f14 != null){
+		if (n.f14.present()){
 			int totalVars = n.f14.size();
 			varTypes = new String[totalVars];
 			varNames = new String[totalVars];
@@ -47,13 +56,27 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
 			}
 		}
 
-		Classes currClass = new Classes();
+
+		/* ---------CLASSES--------- */
+		/* Creating the information class for the current Class */
+		Class currClass = new Class();
 		String[] mainMethod = new String[1];
 		mainMethod[0] = "main";
-		currClass.addClass(className, mainMethod, null, null);
+		currClass.addClass(className, null, mainMethod, null, null);
+		/* Inserting this class in our Class' Hashtable */
+		Hashtable<String, Class> stClasses = st.getClasses();
+		stClasses.put(className, currClass);
 
-		Methods currMethod = new Methods();
-		currMethod.addMethod(null, "main", className, methodIdTypes, methodIdNames, varTypes, varNames);
+
+		/* ---------METHODS--------- */
+		/* Creating the information class for the main method */
+		Method currMethod = new Method();
+		currMethod.addMethod(null, mainMethod[0], className, methodIdTypes, methodIdNames, varTypes, varNames);
+		/* Inserting this class in our Methods' Hashtable */
+		Hashtable<String, Method> stMethods = st.getMethods();
+		stMethods.put(className + ":" + mainMethod[0], currMethod);
+
+
 		return null;
     }
 
@@ -65,38 +88,58 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
      * f4 -> ( MethodDeclaration() )*
      * f5 -> "}"
      */
-    public Object visit(ClassDeclaration n, Object argu) {
+    public Object visit(ClassDeclaration n, Object argu){
+
 
 		String className = n.f1.accept(this, argu).toString();
-		// maybe we should check for multiple declarations
+		/* Checking also if the class is already defined */
+		Hashtable<String, Class> stClasses = st.getClasses();
+		if (stClasses.get(className) != null){
+			System.out.println("Multiple Definition: " + className);
+		}
+
 
 		String[] varTypes = null;
 		String[] varNames = null;
-		if (n.f3 != null){
-
-			int totalVars = n.f3.size();
+		int totalVars = n.f3.size();
+		if (n.f3.present()){
 			varTypes = new String[totalVars];
 			varNames = new String[totalVars];
-
 			for (int currVarPos = 0; currVarPos < totalVars; currVarPos++){
 				String[] currVar = (n.f3.elementAt(currVarPos).accept(this, argu).toString()).split(" ");
 				varTypes[currVarPos] = currVar[0];
 				varNames[currVarPos] = currVar[1];
 			}
 		}
-		// maybe we should check for multiple definitions
+		/* Checking also if the variables are already defined */
+		for (int i = 0; i < totalVars; i++){
+			for (int j = 0; j < totalVars; j++){
+				if ((i != j) && (varNames[i].equals(varNames[j]))){
+		 			System.out.println("Multiple Definition: " + className + "." + varNames[i]);
+				}
+			}
+		}
+
 
 		String[] methods = null;
-		if (n.f4 != null){
-
+		if (n.f4.present()){
 			int totalMethods = n.f4.size();
 			methods = new String[totalMethods];
 			for (int currMethodPos = 0; currMethodPos < totalMethods; currMethodPos++){
 			   methods[currMethodPos] =  n.f4.elementAt(currMethodPos).accept(this, className).toString();
 			}
 		}
-		Classes currClass = new Classes();
-		currClass.addClass(className, methods, varTypes, varNames);
+
+
+		/* ---------CLASSES--------- */
+		/* Creating the information class for the current Class */
+		Class currClass = new Class();
+		currClass.addClass(className, null, methods, varTypes, varNames);
+		/* Inserting this class in our Class' Hashtable */
+		// Hashtable<String, Class> stClasses = st.getClasses();
+		stClasses.put(className, currClass);
+
+
 		return null;
     }
 
@@ -112,38 +155,62 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
      */
     public Object visit(ClassExtendsDeclaration n, Object argu) {
 
+
 		String className = n.f1.accept(this, argu).toString();
+		/* Checking also if the class is already defined */
+		Hashtable<String, Class> stClasses = st.getClasses();
+		if (stClasses.get(className) != null){
+			System.out.println("Multiple Definition: " + className);
+		}
+
+
 		String classExtendsName = n.f3.accept(this, argu).toString();
+		/* Checking also if the extend class has been defined */
+		// Hashtable<String, Class> stClasses = st.getClasses();
+		if (stClasses.get(classExtendsName) == null){
+			System.out.println("Missing Declaration: " + classExtendsName);
+		}
+
 
 		String[] varTypes = null;
 		String[] varNames = null;
-		if (n.f5 != null){
-
-			int totalVars = n.f5.size();
+		int totalVars = n.f5.size();
+		if (n.f5.present()){
 			varTypes = new String[totalVars];
 			varNames = new String[totalVars];
-
 			for (int currVarPos = 0; currVarPos < totalVars; currVarPos++){
 				String[] currVar = (n.f5.elementAt(currVarPos).accept(this, argu).toString()).split(" ");
 				varTypes[currVarPos] = currVar[0];
 				varNames[currVarPos] = currVar[1];
 			}
 		}
-		// maybe we should check for multiple definitions
+		/* Checking also if the variables are already defined */
+		for (int i = 0; i < totalVars; i++){
+			for (int j = 0; j < totalVars; j++){
+				if ((i != j) && (varNames[i].equals(varNames[j]))){
+		 			System.out.println("Multiple Definition: " + className + "." + varNames[i]);
+				}
+			}
+		}
 
 		String[] methods = null;
-		if (n.f6 != null){
-
+		if (n.f6.present()){
 			int totalMethods = n.f6.size();
 			methods = new String[totalMethods];
-
 			for (int currMethodPos = 0; currMethodPos < totalMethods; currMethodPos++){
-			   //later replace className with "this"
 			   methods[currMethodPos] =  n.f6.elementAt(currMethodPos).accept(this, className).toString();
 			}
 		}
-		Classes currClass = new Classes();
-		currClass.addClass(className, methods, varTypes, varNames);
+
+
+		/* ---------CLASSES--------- */
+		/* Creating the information class for the current Class */
+		Class currClass = new Class();
+		currClass.addClass(className, classExtendsName, methods, varTypes, varNames);
+		/* Inserting this class in our Class' Hashtable */
+		// Hashtable<String, Class> stClasses = st.getClasses();
+		stClasses.put(className, currClass);
+
 
 		return null;
     }
@@ -179,7 +246,7 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
      *       | IntegerArrayType()
      */
     public Object visit(ArrayType n, Object argu) {
-       return n.f0.accept(this, argu);
+		return n.f0.accept(this, argu).toString();
     }
 
     /**
@@ -188,7 +255,7 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
      * f2 -> "]"
      */
     public Object visit(BooleanArrayType n, Object argu) {
-		return n.f0.toString()+n.f1.toString()+n.f1.toString();
+		return n.f0.toString() + n.f1.toString() + n.f1.toString();
     }
 
     /**
@@ -197,7 +264,7 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
      * f2 -> "]"
      */
     public Object visit(IntegerArrayType n, Object argu) {
-		return n.f0.toString()+n.f1.toString()+n.f1.toString();
+		return n.f0.toString() + n.f1.toString() + n.f1.toString();
     }
 
 	/**
@@ -231,19 +298,21 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
      */
 	public Object visit(MethodDeclaration n, Object argu) {
 
+
 		String methodType = n.f1.accept(this, argu).toString();
+
+
 		String methodName = n.f2.accept(this, argu).toString();
+
+
 		String[] parTypes = null;
 		String[] parNames = null;
-
-		Object parameterList = n.f4.accept(this, argu);
-		if(parameterList != null){
-
+		if (n.f4.present()){
+			Object parameterList = n.f4.accept(this, argu);
 			String[] parameters = parameterList.toString().split(", ");
 			int totalPars = parameters.length;
 			parTypes = new String[totalPars];
 			parNames = new String[totalPars];
-
 			for (int currParPos = 0; currParPos < totalPars; currParPos++){
 				String[] currPar = parameters[currParPos].split(" ");
 				parTypes[currParPos] = currPar[0];
@@ -251,16 +320,12 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
 			}
 		}
 
-		n.f7.accept(this, argu);
-
 		String[] varTypes = null;
 		String[] varNames = null;
-		if (n.f7 != null){
-
+		if (n.f7.present()){
 			int totalVars = n.f7.size();
 			varTypes = new String[totalVars];
 			varNames = new String[totalVars];
-
 			for (int currVarPos = 0; currVarPos < totalVars; currVarPos++){
 				String[] currVar = (n.f7.elementAt(currVarPos).accept(this, argu).toString()).split(" ");
 				varTypes[currVarPos] = currVar[0];
@@ -269,11 +334,17 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
 		}
 		// maybe we should check for multiple definitions
 
-		Methods currMethod = new Methods();
+
+		/* ---------METHODS--------- */
+		/* Creating the information class for the main method */
+		Method currMethod = new Method();
 		currMethod.addMethod(methodType, methodName, argu.toString(), parTypes, parNames, varTypes, varNames);
+		/* Inserting this class in our Methods' Hashtable */
+		Hashtable<String, Method> stMethods = st.getMethods();
+		stMethods.put(argu + ":" + methodName, currMethod);
 
 
-
+		// CHECK THIS LATER
 		n.f8.accept(this, argu);
 		n.f10.accept(this, argu);
 
@@ -285,14 +356,12 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
      * f0 -> FormalParameter()
      * f1 -> FormalParameterTail()
      */
-    public Object visit(FormalParameterList n, Object argu) {
-
-		Object tail = n.f1.accept(this, argu);
-		if (tail != null){
-			return n.f0.accept(this, argu) + "" + tail;
-		}
-		return n.f0.accept(this, argu);
-    }
+	 public Object visit(FormalParameterList n, Object argu) {
+		 Object tail = n.f1.accept(this, argu);
+		 if (tail != null)
+			 return n.f0.accept(this, argu) + "" + tail;
+		 return n.f0.accept(this, argu);
+	 }
 
     /**
      * f0 -> Type()
