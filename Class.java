@@ -17,4 +17,8 @@ public class Class {
 			varNames = cVarNames.clone();
 	}
 
+	public void test(){
+		System.out.println("RE!");
+
+}
 }

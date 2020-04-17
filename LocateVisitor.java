@@ -101,8 +101,8 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
 
 		String[] varTypes = null;
 		String[] varNames = null;
-		int totalVars = n.f3.size();
 		if (n.f3.present()){
+		int totalVars = n.f3.size();
 			varTypes = new String[totalVars];
 			varNames = new String[totalVars];
 			for (int currVarPos = 0; currVarPos < totalVars; currVarPos++){
@@ -110,12 +110,12 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
 				varTypes[currVarPos] = currVar[0];
 				varNames[currVarPos] = currVar[1];
 			}
-		}
-		/* Checking also if the variables are already defined */
-		for (int i = 0; i < totalVars; i++){
-			for (int j = 0; j < totalVars; j++){
-				if ((i != j) && (varNames[i].equals(varNames[j]))){
-		 			System.out.println("Multiple Definition: " + className + "." + varNames[i]);
+			/* Checking also if the variables are already defined */
+			for (int i = 0; i < totalVars; i++){
+				for (int j = 0; j < totalVars; j++){
+					if ((i != j) && (varNames[i].equals(varNames[j]))){
+			 			System.out.println("Multiple Definition: " + className + "." + varNames[i]);
+					}
 				}
 			}
 		}
@@ -126,7 +126,7 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
 			int totalMethods = n.f4.size();
 			methods = new String[totalMethods];
 			for (int currMethodPos = 0; currMethodPos < totalMethods; currMethodPos++){
-			   methods[currMethodPos] =  n.f4.elementAt(currMethodPos).accept(this, className).toString();
+				methods[currMethodPos] =  n.f4.elementAt(currMethodPos).accept(this, className).toString();
 			}
 		}
 
@@ -174,8 +174,8 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
 
 		String[] varTypes = null;
 		String[] varNames = null;
-		int totalVars = n.f5.size();
 		if (n.f5.present()){
+		int totalVars = n.f5.size();
 			varTypes = new String[totalVars];
 			varNames = new String[totalVars];
 			for (int currVarPos = 0; currVarPos < totalVars; currVarPos++){
@@ -183,22 +183,23 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
 				varTypes[currVarPos] = currVar[0];
 				varNames[currVarPos] = currVar[1];
 			}
-		}
-		/* Checking also if the variables are already defined */
-		for (int i = 0; i < totalVars; i++){
-			for (int j = 0; j < totalVars; j++){
-				if ((i != j) && (varNames[i].equals(varNames[j]))){
-		 			System.out.println("Multiple Definition: " + className + "." + varNames[i]);
+			/* Checking also if the variables are already defined */
+			for (int i = 0; i < totalVars; i++){
+				for (int j = 0; j < totalVars; j++){
+					if ((i != j) && (varNames[i].equals(varNames[j]))){
+			 			System.out.println("Multiple Definition: " + className + "." + varNames[i]);
+					}
 				}
 			}
 		}
+
 
 		String[] methods = null;
 		if (n.f6.present()){
 			int totalMethods = n.f6.size();
 			methods = new String[totalMethods];
 			for (int currMethodPos = 0; currMethodPos < totalMethods; currMethodPos++){
-			   methods[currMethodPos] =  n.f6.elementAt(currMethodPos).accept(this, className).toString();
+			   methods[currMethodPos] =  n.f6.elementAt(currMethodPos).accept(this, className + "<" + classExtendsName).toString();
 			}
 		}
 
@@ -297,20 +298,34 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
      * f12 -> "}"
      */
 	public Object visit(MethodDeclaration n, Object argu) {
+		/* argu = Method's Class Name + < + Method's Class Extender Name if exists*/
 
 
-		String methodType = n.f1.accept(this, argu).toString();
+		String[] parts = argu.toString().split("<");
+		String className = parts[0];
+		String classExtendsName = null;
+		if (parts.length == 2)
+			classExtendsName = parts[1];
 
 
-		String methodName = n.f2.accept(this, argu).toString();
+		String methodType = n.f1.accept(this, className).toString();
+
+
+		String methodName = n.f2.accept(this, className).toString();
+		/* Checking also if the method is already defined */
+		Hashtable<String, Method> stMethods = st.getMethods();
+		if (stMethods.get(className + "." + methodName) != null){
+			System.out.println("Multiple Definition: " + className + "." + methodName);
+		}
 
 
 		String[] parTypes = null;
 		String[] parNames = null;
+		int totalPars = 0;
 		if (n.f4.present()){
-			Object parameterList = n.f4.accept(this, argu);
+			Object parameterList = n.f4.accept(this, className);
 			String[] parameters = parameterList.toString().split(", ");
-			int totalPars = parameters.length;
+			totalPars = parameters.length;
 			parTypes = new String[totalPars];
 			parNames = new String[totalPars];
 			for (int currParPos = 0; currParPos < totalPars; currParPos++){
@@ -318,7 +333,16 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
 				parTypes[currParPos] = currPar[0];
 				parNames[currParPos] = currPar[1];
 			}
+			/* Checking also if the parameters are already defined */
+			for (int i = 0; i < totalPars; i++){
+				for (int j = 0; j < totalPars; j++){
+					if ((i != j) && (parNames[i].equals(parNames[j]))){
+			 			System.out.println("Multiple Definition: " + className + "." + methodName + "." + parNames[i]);
+					}
+				}
+			}
 		}
+
 
 		String[] varTypes = null;
 		String[] varNames = null;
@@ -327,12 +351,46 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
 			varTypes = new String[totalVars];
 			varNames = new String[totalVars];
 			for (int currVarPos = 0; currVarPos < totalVars; currVarPos++){
-				String[] currVar = (n.f7.elementAt(currVarPos).accept(this, argu).toString()).split(" ");
+				String[] currVar = (n.f7.elementAt(currVarPos).accept(this, className).toString()).split(" ");
 				varTypes[currVarPos] = currVar[0];
 				varNames[currVarPos] = currVar[1];
 			}
+			/* Checking also if the parameters are already defined */
+			for (int i = 0; i < totalVars; i++){
+				for (int j = 0; j < totalPars; j++){
+					if (varNames[i].equals(parNames[j])){
+			 			System.out.println("Multiple Definition: " + className + "." + methodName + "." + varNames[i]);
+					}
+				}
+				for (int j = 0; j < totalVars; j++){
+					if ((i != j) && (varNames[i].equals(varNames[j]))){
+			 			System.out.println("Multiple Definition: " + className + "." + methodName + "." + varNames[i]);
+					}
+				}
+			}
 		}
-		// maybe we should check for multiple definitions
+
+
+		if (classExtendsName != null){
+			Method extenderCLassMethod = stMethods.get(classExtendsName + "." + methodName);
+			if (extenderCLassMethod != null){
+				if (extenderCLassMethod.methodType != methodType){
+					System.out.println("Different Method Type from superclass: " + className + "." + methodName + "." + varNames[i]);
+				}
+				else{
+					for (int i = 0; i < totalPars; i++){
+						for (int j = 0; j < extenderCLassMethod.methodIdNames.length; j++){
+							if (!parTypes[i].equals(extenderCLassMethod.methodIdTypes[j])){
+								System.out.println("Different Variable Type from superclass: " + className + "." + methodName + "." + parTypes[i] + "." + parNames[i]);
+							}
+							if (!parNames[i].equals(extenderCLassMethod.methodIdNames[j])){
+								System.out.println("Different Variable Name from superclass: " + className + "." + methodName + "." + parTypes[i] + "." + parNames[i]);
+							}
+						}
+					}
+				}
+			}
+		}
 
 
 		/* ---------METHODS--------- */
@@ -340,13 +398,8 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
 		Method currMethod = new Method();
 		currMethod.addMethod(methodType, methodName, argu.toString(), parTypes, parNames, varTypes, varNames);
 		/* Inserting this class in our Methods' Hashtable */
-		Hashtable<String, Method> stMethods = st.getMethods();
-		stMethods.put(argu + ":" + methodName, currMethod);
-
-
-		// CHECK THIS LATER
-		n.f8.accept(this, argu);
-		n.f10.accept(this, argu);
+		//Hashtable<String, Method> stMethods = st.getMethods();
+		stMethods.put(argu + "." + methodName, currMethod);
 
 
 		return methodName;

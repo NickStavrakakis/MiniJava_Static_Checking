@@ -20,7 +20,7 @@ public class Method {
 			methodVarTypes = mVarTypes.clone();
 		if (mVarNames != null)
 			methodVarNames = mVarNames.clone();
-		//System.out.println("Added " + className + ": " + methodName + "()");
+		//System.out.println("Added " + className + ": " + methodType + ": " + methodName + "()");
 	}
 
 }
