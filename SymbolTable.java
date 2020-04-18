@@ -1,8 +1,7 @@
-import java.util.*;
+import java.util.Hashtable;
+
 
 public class SymbolTable {
-
-
 
 
 	// explain this on readme

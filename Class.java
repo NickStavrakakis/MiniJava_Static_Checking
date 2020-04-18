@@ -1,24 +1,20 @@
 public class Class {
 
-	public String className;
-	public String classExtendsName;
-	public String[] classMethod;
+	public String name;
+	public String nameExtends;
+	public String[] methods;
 	public String[] varTypes;
 	public String[] varNames;
 
 	public void addClass(String cName, String cExtendsName, String[] cMethod, String[] cVarTypes, String[] cVarNames){
-		className = cName;
-		classExtendsName = cExtendsName;
+		name = cName;
+		nameExtends = cExtendsName;
 		if (cMethod != null)
-			classMethod = cMethod.clone();
+			methods = cMethod.clone();
 		if (cVarTypes != null)
 			varTypes = cVarTypes.clone();
 		if (cVarNames != null)
 			varNames = cVarNames.clone();
 	}
 
-	public void test(){
-		System.out.println("RE!");
-
-}
 }

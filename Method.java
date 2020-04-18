@@ -1,26 +1,26 @@
 public class Method {
 
-	public String methodType;
-	public String methodName;
-	public String className;
-	public String[] methodIdTypes;
-	public String[] methodIdNames;
-	public String[] methodVarTypes;
-	public String[] methodVarNames;
+	public String type;
+	public String name;
+	public String nameClass;
+	public String[] parTypes;
+	public String[] parNames;
+	public String[] VarTypes;
+	public String[] VarNames;
 
 	public void addMethod(String mType, String mName, String cName, String[] mIdTypes, String[] mIdNames, String[] mVarTypes, String[] mVarNames){
-		methodType = mType;
-		methodName = mName;
-		className = cName;
+		type = mType;
+		name = mName;
+		nameClass = cName;
 		if (mIdTypes != null)
-			methodIdTypes = mIdTypes.clone();
+			parTypes = mIdTypes.clone();
 		if (mIdNames != null)
-			methodIdNames = mIdNames.clone();
+			parNames = mIdNames.clone();
 		if (mVarTypes != null)
-			methodVarTypes = mVarTypes.clone();
+			VarTypes = mVarTypes.clone();
 		if (mVarNames != null)
-			methodVarNames = mVarNames.clone();
-		//System.out.println("Added " + className + ": " + methodType + ": " + methodName + "()");
+			VarNames = mVarNames.clone();
+		//System.out.println("Added " + nameClass + ": " + type + ": " + name + "()");
 	}
 
 }
