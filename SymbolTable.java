@@ -15,7 +15,7 @@ public class SymbolTable {
 
 	public Hashtable<String, Class> getClasses(){
 		return stClasses;
-	}
+	}\
 
 	public void addClass(String cName, String[] cMethod, String[] cVarTypes, String[] cVarNames){
 		className = cName;
