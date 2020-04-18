@@ -20,8 +20,8 @@ clean:
 	clear
 
 commit:	clean delete
-	git add -A
-	git commit -m "$(date +"%H:%M Update")"
+	#git add -A
+	git commit -m "$(date +"%D %T")"
 	git push
 
 delete:	clean
