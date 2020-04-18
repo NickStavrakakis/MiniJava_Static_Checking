@@ -19,9 +19,12 @@ clean:
 	rm -f *.class *~
 	clear
 
-commit:	clean delete
-	#git add -A
-	git commit -m "$(date +"%D %T")"
+commit_command = "git commit -m"
+commit_message = $("git commit -m") + date +"%H:%M Update"
+
+commit:#	clean delete
+	git add -A
+	$(commit_message)
 	git push
 
 delete:	clean
