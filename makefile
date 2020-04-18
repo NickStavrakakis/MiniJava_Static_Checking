@@ -19,16 +19,11 @@ clean:
 	rm -f *.class *~
 	clear
 
-commit:#	clean delete
+commit:	clean delete
 	git add -A
-	$(commit_message)
+	git commit -m "Update"
 	git push
 
 delete:	clean
 	rm TokenMgrError.* Token.* MiniJava* JavaCharStream.* ParseException.*
 	rm -r visitor/ syntaxtree/
-
-TEST = $(date +"Now time is %H:%M Update")
-
-mytest:
-	git commit -m "`date +'%H:%M'` Updated"
