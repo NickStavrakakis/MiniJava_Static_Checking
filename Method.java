@@ -5,21 +5,22 @@ public class Method {
 	public String nameClass;
 	public String[] parTypes;
 	public String[] parNames;
-	public String[] VarTypes;
-	public String[] VarNames;
+	public String[] varTypes;
+	public String[] varNames;
 
 	public void addMethod(String mType, String mName, String cName, String[] mIdTypes, String[] mIdNames, String[] mVarTypes, String[] mVarNames){
 		type = mType;
 		name = mName;
 		nameClass = cName;
+
 		if (mIdTypes != null)
 			parTypes = mIdTypes.clone();
 		if (mIdNames != null)
 			parNames = mIdNames.clone();
 		if (mVarTypes != null)
-			VarTypes = mVarTypes.clone();
+			varTypes = mVarTypes.clone();
 		if (mVarNames != null)
-			VarNames = mVarNames.clone();
+			varNames = mVarNames.clone();
 		//System.out.println("Added " + nameClass + ": " + type + ": " + name + "()");
 	}
 

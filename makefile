@@ -13,6 +13,7 @@ compile:
 	javac Method.java
 	javac SymbolTable.java
 	javac LocateVisitor.java
+	javac Visitor2.java
 	javac Main.java
 
 clean:

@@ -410,7 +410,7 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
      * f2 -> "]"
      */
     public Object visit(BooleanArrayType n, Object argu) {
-		return n.f0.toString() + n.f1.toString() + n.f1.toString();
+		return n.f0.toString() + n.f1.toString() + n.f2.toString();
     }
 
 	/**
@@ -419,7 +419,7 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
      * f2 -> "]"
      */
     public Object visit(IntegerArrayType n, Object argu) {
-		return n.f0.toString() + n.f1.toString() + n.f1.toString();
+		return n.f0.toString() + n.f1.toString() + n.f2.toString();
     }
 
 	/**

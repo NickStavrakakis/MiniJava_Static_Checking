@@ -6,15 +6,15 @@ public class Class {
 	public String[] varTypes;
 	public String[] varNames;
 
-	public void addClass(String cName, String cExtendsName, String[] cMethod, String[] cVarTypes, String[] cVarNames){
+	public void addClass(String cName, String cExtendsName, String[] cMethod, String[] cvarTypes, String[] cvarNames){
 		name = cName;
 		nameExtends = cExtendsName;
 		if (cMethod != null)
 			methods = cMethod.clone();
-		if (cVarTypes != null)
-			varTypes = cVarTypes.clone();
-		if (cVarNames != null)
-			varNames = cVarNames.clone();
+		if (cvarTypes != null)
+			varTypes = cvarTypes.clone();
+		if (cvarNames != null)
+			varNames = cvarNames.clone();
 	}
 
 }

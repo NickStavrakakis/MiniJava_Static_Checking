@@ -17,7 +17,7 @@ public class SymbolTable {
 		return stClasses;
 	}
 
-	public void addClass(String cName, String[] cMethod, String[] cVarTypes, String[] cVarNames){
+	public void addClass(String cName, String[] cMethod, String[] cvarTypes, String[] cvarNames){
 		className = cName;
 		classMethod = cMethod;
 	}
