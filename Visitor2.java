@@ -191,43 +191,66 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 		}
 
 
-		n.f10.accept(this, className + "." + methodName);
-
+		String retType = n.f10.accept(this, className + "." + methodName).toString();
+		parts = retType.split("\\|");
+		if (parts.length == 2)
+			retType = parts[1];
+		else if (retType.equals("this")){
+			retType = currClassName;
+		}
+		if (!retType.equals(methodType)){
+			System.out.println("Expected " + methodType + " type @MethodDeclaration");
+			System.exit(1);
+		}
 
 		return null;
 	}
 
 	/**
-	* f0 -> FormalParameter()
-	* f1 -> FormalParameterTail()
-	*/
-	public Object visit(FormalParameterList n, Object argu) {
-		System.out.println("FormalParameterList");
+     * f0 -> FormalParameter()
+     * f1 -> FormalParameterTail()
+     */
+    public Object visit(FormalParameterList n, Object argu) {
 
-		Object tail = n.f1.accept(this, argu);
-		if (tail != null)
-			return n.f0.accept(this, argu) + "" + tail;
-		return n.f0.accept(this, argu);
+		Object currPar = n.f0.accept(this, argu);
+		Object currParTail = n.f1.accept(this, argu);
+		if (currPar != null){
+			if(currParTail!=null)
+				return currPar.toString() + " " + currParTail.toString();
+			return currPar.toString();
+    	}
+    	return null;
+    }
+
+    /**
+     * f0 -> Type()
+     * f1 -> Identifier()
+     */
+    public Object visit(FormalParameter n, Object argu) {
+		return n.f0.accept(this, argu).toString() + " " + n.f1.accept(this, argu).toString();
+    }
+
+    /**
+     * f0 -> ( FormalParameterTerm() )*
+     */
+    public Object visit(FormalParameterTail n, Object argu) {
+
+		int totalPars = n.f0.size();
+		String currParTail = "";
+		for (int currParPos = 0; currParPos < totalPars; currParPos++)
+			currParTail = currParTail + ", " + n.f0.elementAt(currParPos).accept(this, argu).toString();
+		if(currParTail != null)
+			return currParTail;
+
+		return null;
 	}
 
 	/**
-	* f0 -> Type()
-	* f1 -> Identifier()
-	*/
-	public Object visit(FormalParameter n, Object argu) {
-		System.out.println("FormalParameter");
-
-		return n.f0.accept(this, null).toString() + " " + n.f1.accept(this, null).toString();
-	}
-
-	/**
-	* f0 -> ","
-	* f1 -> FormalParameter()
-	*/
+	 * f0 -> ","
+	 * f1 -> FormalParameter()
+	 */
 	public Object visit(FormalParameterTerm n, Object argu) {
-		System.out.println("FormalParameter");
-
-		return n.f0 + " " + n.f1.accept(this, argu);
+		return n.f1.accept(this, argu);
 	}
 
 	/**
@@ -486,23 +509,23 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	public Object visit(AndExpression n, Object argu) {
 		System.out.println("AndExpression");
 
-		String exTypeLeft = n.f0.accept(this, argu).toString();
-		String exTypeRight = n.f2.accept(this, argu).toString();
-		String[] partsLeft = exTypeLeft.split("\\|");
-		String[] partsRight = exTypeRight.split("\\|");
+		String clauseTypeLeft = n.f0.accept(this, argu).toString();
+		String clauseTypeRight = n.f2.accept(this, argu).toString();
+		String[] partsLeft = clauseTypeLeft.split("\\|");
+		String[] partsRight = clauseTypeRight.split("\\|");
 		if (partsLeft.length == 2)
-			exTypeLeft = partsLeft[1];
-		else if (exTypeLeft.equals("this")){
-			exTypeLeft = currClassName;
+			clauseTypeLeft = partsLeft[1];
+		else if (clauseTypeLeft.equals("this")){
+			clauseTypeLeft = currClassName;
 		}
 		if (partsRight.length == 2)
-			exTypeRight = partsRight[1];
-		else if (exTypeRight.equals("this")){
-			exTypeRight = currClassName;
+			clauseTypeRight = partsRight[1];
+		else if (clauseTypeRight.equals("this")){
+			clauseTypeRight = currClassName;
 		}
 
 
-		if (!exTypeLeft.equals("boolean") || !exTypeRight.equals("boolean")){
+		if (!clauseTypeLeft.equals("boolean") || !clauseTypeRight.equals("boolean")){
 			System.out.println("Expected boolean type @AndExpression");
 			System.exit(1);
 		}
@@ -620,8 +643,23 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	public Object visit(TimesExpression n, Object argu) {
 		System.out.println("TimesExpression");
 
-		if (!n.f0.accept(this, argu).toString().equals("int") ||
-			!n.f2.accept(this, argu).toString().equals("int")){
+
+		String exTypeLeft = n.f0.accept(this, argu).toString();
+		String exTypeRight = n.f2.accept(this, argu).toString();
+		String[] partsLeft = exTypeLeft.split("\\|");
+		String[] partsRight = exTypeRight.split("\\|");
+		if (partsLeft.length == 2)
+			exTypeLeft = partsLeft[1];
+		else if (exTypeLeft.equals("this")){
+			exTypeLeft = currClassName;
+		}
+		if (partsRight.length == 2)
+			exTypeRight = partsRight[1];
+		else if (exTypeRight.equals("this")){
+			exTypeRight = currClassName;
+		}
+
+		if (!exTypeLeft.equals("int") || !exTypeRight.equals("int")){
 			System.out.println("Expected int type @TimesExpression");
 			System.exit(1);
 		}
@@ -852,7 +890,19 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	public Object visit(NotExpression n, Object argu) {
 		System.out.println("NotExpression");
 
-		if (!n.f1.accept(this, argu).toString().equals("boolean")){
+		// Remove this, it should never be null
+		if (n.f1.accept(this, argu)== null)
+			return null;
+
+		String clauseType = n.f1.accept(this, argu).toString();
+		String[] parts = clauseType.split("\\|");
+		if (parts.length == 2)
+			clauseType = parts[1];
+		else if (clauseType.equals("this")){
+			clauseType = currClassName;
+		}
+
+		if (!clauseType.equals("boolean")){
 			System.out.println("Expected boolean type @NotExpression");
 			System.exit(1);
 		}

@@ -283,10 +283,12 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
  	   if (n.f4.present()){
  		   Object parameterList = n.f4.accept(this, className);
  		   String[] parameters = parameterList.toString().split(", ");
+		   System.out.println("-----> " + parameterList.toString());
  		   totalPars = parameters.length;
  		   parTypes = new String[totalPars];
  		   parNames = new String[totalPars];
  		   for (int currParPos = 0; currParPos < totalPars; currParPos++){
+		   System.out.println("---> " + parameters[currParPos]);
  			   String[] currPar = parameters[currParPos].split(" ");
  			   parTypes[currParPos] = currPar[0];
  			   parNames[currParPos] = currPar[1];
@@ -369,32 +371,52 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
  	   return methodName;
     }
 
-   /**
-    * f0 -> FormalParameter()
-    * f1 -> FormalParameterTail()
-    */
-	public Object visit(FormalParameterList n, Object argu) {
- 	   Object tail = n.f1.accept(this, argu);
- 	   if (tail != null)
- 		   return n.f0.accept(this, argu) + "" + tail;
- 	   return n.f0.accept(this, argu);
+	/**
+     * f0 -> FormalParameter()
+     * f1 -> FormalParameterTail()
+     */
+    public Object visit(FormalParameterList n, Object argu) {
+
+		Object currPar = n.f0.accept(this, argu);
+		Object currParTail = n.f1.accept(this, argu);
+		if (currPar != null){
+			if(currParTail!=null)
+				return currPar.toString() + " " + currParTail.toString();
+			return currPar.toString();
+    	}
+    	return null;
     }
 
-   /**
-    * f0 -> Type()
-    * f1 -> Identifier()
-    */
-	public Object visit(FormalParameter n, Object argu) {
+    /**
+     * f0 -> Type()
+     * f1 -> Identifier()
+     */
+    public Object visit(FormalParameter n, Object argu) {
 		return n.f0.accept(this, argu).toString() + " " + n.f1.accept(this, argu).toString();
     }
 
-   /**
-    * f0 -> ","
-    * f1 -> FormalParameter()
-    */
+    /**
+     * f0 -> ( FormalParameterTerm() )*
+     */
+    public Object visit(FormalParameterTail n, Object argu) {
+
+		int totalPars = n.f0.size();
+		String currParTail = "";
+		for (int currParPos = 0; currParPos < totalPars; currParPos++)
+			currParTail = currParTail + ", " + n.f0.elementAt(currParPos).accept(this, argu).toString();
+		if(currParTail != null)
+			return currParTail;
+
+		return null;
+	}
+
+	/**
+	 * f0 -> ","
+	 * f1 -> FormalParameter()
+	 */
 	public Object visit(FormalParameterTerm n, Object argu) {
-		return n.f0 + " " + n.f1.accept(this, argu);
-    }
+		return n.f1.accept(this, argu);
+	}
 
 	/**
  	* f0 -> BooleanArrayType()
