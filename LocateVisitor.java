@@ -283,12 +283,10 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
  	   if (n.f4.present()){
  		   Object parameterList = n.f4.accept(this, className);
  		   String[] parameters = parameterList.toString().split(", ");
-		   System.out.println("-----> " + parameterList.toString());
  		   totalPars = parameters.length;
  		   parTypes = new String[totalPars];
  		   parNames = new String[totalPars];
  		   for (int currParPos = 0; currParPos < totalPars; currParPos++){
-		   System.out.println("---> " + parameters[currParPos]);
  			   String[] currPar = parameters[currParPos].split(" ");
  			   parTypes[currParPos] = currPar[0];
  			   parNames[currParPos] = currPar[1];

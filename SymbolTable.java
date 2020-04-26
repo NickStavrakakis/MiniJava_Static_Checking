@@ -30,13 +30,9 @@ public class SymbolTable {
 		System.out.println("getVarType("+ idName +", "+ varName+")");
 		Method currMethod = stMethods.get(idName);
 		if (currMethod != null){
-			System.out.println("hey 1");
 			if (currMethod.parNames != null){
 				int totalPars = currMethod.parNames.length;
-					System.out.println("hey 2 " + totalPars);
 				for (int currPar = 0; currPar < totalPars; currPar++){
-
-					System.out.println("hey 3 " + currMethod.parNames[currPar]);
 					if (currMethod.parNames[currPar].equals(varName))
 						return currMethod.parTypes[currPar];
 				}

@@ -227,7 +227,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
      * f1 -> Identifier()
      */
     public Object visit(FormalParameter n, Object argu) {
-		return n.f0.accept(this, argu).toString() + " " + n.f1.accept(this, argu).toString();
+		return n.f0.accept(this, argu).toString() + " " + n.f1.accept(this, null).toString();
     }
 
     /**
@@ -370,6 +370,9 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f5 -> Expression()
 	 * f6 -> ";"
 	 */
+
+
+	 //FIX THIS ALSO BOOLEAN && ARRAY length
 	public Object visit(ArrayAssignmentStatement n, Object argu) {
 		System.out.println("ArrayAssignmentStatement");
 
@@ -491,12 +494,18 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	public Object visit(PrintStatement n, Object argu) {
 		System.out.println("PrintStatement");
 
-		// if (!n.f2.accept(this, argu).toString().equals("int") ||
-		// 	!n.f2.accept(this, argu).toString().equals("boolean")){
-		// 	System.out.println("Expected int/boolean type @PrintStatement");
-		// 	System.exit(1);
-		// }
+		String exType = n.f2.accept(this, argu).toString();
+		String[] parts = exType.split("\\|");
+		if (parts.length == 2)
+			exType = parts[1];
+		else if (exType.equals("this")){
+			exType = currClassName;
+		}
 
+		if (!exType.equals("int")){
+			System.out.println("Expected int type @PrintStatement");
+			System.exit(1);
+		}
 
 		return null;
 	}
@@ -727,7 +736,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 		}
 
 
-		if (!n.f0.accept(this, argu).toString().equals("int[]")){
+		if (!exType.equals("int[]")){
 			System.out.println("Expected int[] type @ArrayLength");
 			System.exit(1);
 		}
@@ -747,9 +756,60 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	public Object visit(MessageSend n, Object argu) {
 		System.out.println("MessageSend");
 
-		// Fix this block
-		n.f2.accept(this, null);
-		return null;
+		String exType = n.f0.accept(this, argu).toString();
+		String[] parts = exType.split("\\|");
+		if (parts.length == 2)
+			exType = parts[1];
+		else if (exType.equals("this")){
+			exType = currClassName;
+		}
+
+
+		String idName = n.f2.accept(this, null).toString();
+
+
+		if (exType.equals("int") || exType.equals("int[]") || exType.equals("boolean") || exType.equals("boolean[]")){
+			System.out.println("Expected a class name type @MessageSend");
+			System.exit(1);
+		}
+
+		Hashtable<String, Class> stClasses = st.getClasses();
+		if (stClasses.get(exType) == null){
+			System.out.println("\tMissing class Declaration @MessageSend " + exType);
+			System.exit(1);
+		}
+
+		Hashtable<String, Method> stMethods = st.getMethods();
+		Method currMethod = stMethods.get(exType + "." + idName);
+
+		if (n.f4.present()){
+			String exList = n.f4.accept(this, argu).toString();
+			parts = exList.split(",");
+			int totalPars = currMethod.parNames.length;
+			for(int currExPos = 0; currExPos < parts.length; currExPos++){
+				for (int currParPos = 0; currParPos < totalPars; currParPos++){
+					String currExType = parts[currExPos];
+					String[] currParts = currExType.split("\\|");
+					if (currParts.length == 2)
+						currExType = currParts[1];
+					else if (currExType.equals("this")){
+						currExType = currClassName;
+					}
+					if (!currExType.equals(currMethod.parTypes[currParPos])){
+						System.out.println("\tFind a good name @MessageSend");
+						System.exit(1);
+					}
+				}
+			}
+		}
+
+
+		if (currMethod.type == null){
+			System.out.println("\tCan not return null type @MessageSend");
+			System.exit(1);
+		}
+
+		return currMethod.type;
 	}
 
 	/**
@@ -827,7 +887,15 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 		System.out.println("BooleanArrayAllocationExpression");
 
 
-		if (!n.f3.accept(this, argu).toString().equals("boolean")){
+		String exType = n.f3.accept(this, argu).toString();
+		String[] parts = exType.split("\\|");
+		if (parts.length == 2)
+			exType = parts[1];
+		else if (exType.equals("this")){
+			exType = currClassName;
+		}
+
+		if (exType.equals("boolean")){
 			System.out.println("Expected int type @BooleanArrayAllocationExpression");
 			System.exit(1);
 		}
