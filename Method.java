@@ -21,7 +21,7 @@ public class Method {
 			varTypes = mVarTypes.clone();
 		if (mVarNames != null)
 			varNames = mVarNames.clone();
-		//System.out.println("Added " + nameClass + ": " + type + ": " + name + "()");
+		System.out.println("\t\t\t\tAdded " + mName);
 	}
 
 }

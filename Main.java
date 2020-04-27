@@ -21,20 +21,20 @@ class Main {
 
 			    fis_A = new FileInputStream(currFileName);
 			    MiniJavaParser parser_A = new MiniJavaParser(fis_A);
-				System.err.println(currFileName + " parsed successfully.");
+				System.err.println("\n" + currFileName + " parsed successfully.");
+
 			    LocateVisitor visitor_A = new LocateVisitor();
 			    Goal root_A = parser_A.Goal();
 				root_A.accept(visitor_A, null);
 				st =  visitor_A.st;
-				System.out.println("Visitor A ended successfully");
+				System.out.println("\tVisitor A ended successfully");
 
 				fis_B = new FileInputStream(currFileName);
 				MiniJavaParser parser_B = new MiniJavaParser(fis_B);
-				System.err.println(currFileName + " parsed successfully.");
 				Visitor2 visitor_B = new Visitor2(st);
 				Goal root_B = parser_B.Goal();
 				root_B.accept(visitor_B, null);
-				System.out.println("Visitor B ended successfully");
+				System.out.println("\tVisitor B ended successfully");
 
 			}
 			catch(ParseException ex){
@@ -42,6 +42,9 @@ class Main {
 			}
 			catch(FileNotFoundException ex){
 			    System.err.println(ex.getMessage());
+			}
+			catch(Exception ex){
+			    System.err.println("\u001B[31m" + ex.getMessage() + "\u001B[0m");
 			}
 			finally{
 			    try{

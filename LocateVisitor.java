@@ -31,7 +31,7 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
      * f16 -> "}"
      * f17 -> "}"
      */
-    public Object visit(MainClass n, Object argu) {
+    public Object visit(MainClass n, Object argu) throws Exception{
 
 
 		String className = n.f1.accept(this, argu).toString();
@@ -83,7 +83,7 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
 		currMethod.addMethod(null, mainMethod[0], className, methodIdTypes, methodIdNames, varTypes, varNames);
 		/* Inserting this class in our Methods' Hashtable */
 		Hashtable<String, Method> stMethods = st.getMethods();
-		stMethods.put(className + ":" + mainMethod[0], currMethod);
+		stMethods.put(className + "." + mainMethod[0], currMethod);
 
 
 		return null;
@@ -97,7 +97,8 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
     * f4 -> ( MethodDeclaration() )*
     * f5 -> "}"
     */
-	public Object visit(ClassDeclaration n, Object argu){
+
+	public Object visit(ClassDeclaration n, Object argu) throws Exception{
 
 
  	   String className = n.f1.accept(this, argu).toString();
@@ -164,7 +165,7 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
     * f6 -> ( MethodDeclaration() )*
     * f7 -> "}"
     */
-	public Object visit(ClassExtendsDeclaration n, Object argu) {
+	public Object visit(ClassExtendsDeclaration n, Object argu) throws Exception{
 
 
   	  String className = n.f1.accept(this, argu).toString();
@@ -235,7 +236,7 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
 	 * f1 -> Identifier()
 	 * f2 -> ";"
 	 */
-	public Object visit(VarDeclaration n, Object argu) {
+	public Object visit(VarDeclaration n, Object argu) throws Exception{
 		return n.f0.accept(this, argu) + " " + n.f1.accept(this, argu);
 	}
 
@@ -254,7 +255,7 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
     * f11 -> ";"
     * f12 -> "}"
     */
-	public Object visit(MethodDeclaration n, Object argu) {
+	public Object visit(MethodDeclaration n, Object argu) throws Exception{
  	   /* argu = Method's Class Name + < + Method's Class Extender Name if exists*/
 
 
@@ -282,11 +283,14 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
  	   int totalPars = 0;
  	   if (n.f4.present()){
  		   Object parameterList = n.f4.accept(this, className);
- 		   String[] parameters = parameterList.toString().split(", ");
+ 		   String[] parameters = parameterList.toString().split(",");
+		   System.out.println("\t\t\tparameterList: " + parameterList.toString());
+
  		   totalPars = parameters.length;
  		   parTypes = new String[totalPars];
  		   parNames = new String[totalPars];
  		   for (int currParPos = 0; currParPos < totalPars; currParPos++){
+		   System.out.println("\t\t\totalPars: " + totalPars);
  			   String[] currPar = parameters[currParPos].split(" ");
  			   parTypes[currParPos] = currPar[0];
  			   parNames[currParPos] = currPar[1];
@@ -360,10 +364,10 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
  	   /* ---------METHODS--------- */
  	   /* Creating the information class for the main method */
  	   Method currMethod = new Method();
- 	   currMethod.addMethod(methodType, methodName, argu.toString(), parTypes, parNames, varTypes, varNames);
+ 	   currMethod.addMethod(methodType, className + "." + methodName, argu.toString(), parTypes, parNames, varTypes, varNames);
  	   /* Inserting this class in our Methods' Hashtable */
  	   //Hashtable<String, Method> stMethods = st.getMethods();
- 	   stMethods.put(argu + "." + methodName, currMethod);
+ 	   stMethods.put(className + "." + methodName, currMethod);
 
 
  	   return methodName;
@@ -373,13 +377,15 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
      * f0 -> FormalParameter()
      * f1 -> FormalParameterTail()
      */
-    public Object visit(FormalParameterList n, Object argu) {
+    public Object visit(FormalParameterList n, Object argu) throws Exception{
 
 		Object currPar = n.f0.accept(this, argu);
 		Object currParTail = n.f1.accept(this, argu);
 		if (currPar != null){
 			if(currParTail!=null)
-				return currPar.toString() + " " + currParTail.toString();
+				//return currPar.toString() + " " + currParTail.toString();
+				return currPar.toString() + currParTail.toString();
+
 			return currPar.toString();
     	}
     	return null;
@@ -389,19 +395,19 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
      * f0 -> Type()
      * f1 -> Identifier()
      */
-    public Object visit(FormalParameter n, Object argu) {
+    public Object visit(FormalParameter n, Object argu) throws Exception{
 		return n.f0.accept(this, argu).toString() + " " + n.f1.accept(this, argu).toString();
     }
 
     /**
      * f0 -> ( FormalParameterTerm() )*
      */
-    public Object visit(FormalParameterTail n, Object argu) {
+    public Object visit(FormalParameterTail n, Object argu) throws Exception{
 
 		int totalPars = n.f0.size();
 		String currParTail = "";
 		for (int currParPos = 0; currParPos < totalPars; currParPos++)
-			currParTail = currParTail + ", " + n.f0.elementAt(currParPos).accept(this, argu).toString();
+			currParTail = currParTail + "," + n.f0.elementAt(currParPos).accept(this, argu).toString();
 		if(currParTail != null)
 			return currParTail;
 
@@ -412,7 +418,7 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
 	 * f0 -> ","
 	 * f1 -> FormalParameter()
 	 */
-	public Object visit(FormalParameterTerm n, Object argu) {
+	public Object visit(FormalParameterTerm n, Object argu) throws Exception{
 		return n.f1.accept(this, argu);
 	}
 
@@ -420,7 +426,7 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
  	* f0 -> BooleanArrayType()
  	*       | IntegerArrayType()
  	*/
-    public Object visit(ArrayType n, Object argu) {
+    public Object visit(ArrayType n, Object argu) throws Exception{
  	   return n.f0.accept(this, argu).toString();
     }
 
@@ -429,7 +435,7 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
      * f1 -> "["
      * f2 -> "]"
      */
-    public Object visit(BooleanArrayType n, Object argu) {
+    public Object visit(BooleanArrayType n, Object argu) throws Exception{
 		return n.f0.toString() + n.f1.toString() + n.f2.toString();
     }
 
@@ -438,28 +444,28 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
      * f1 -> "["
      * f2 -> "]"
      */
-    public Object visit(IntegerArrayType n, Object argu) {
+    public Object visit(IntegerArrayType n, Object argu) throws Exception{
 		return n.f0.toString() + n.f1.toString() + n.f2.toString();
     }
 
 	/**
 	* f0 -> "boolean"
 	*/
-	public Object visit(BooleanType n, Object argu) {
+	public Object visit(BooleanType n, Object argu) throws Exception{
 		return n.f0.toString();
 	}
 
 	/**
      * f0 -> "int"
      */
- 	public Object visit(IntegerType n, Object argu) {
+ 	public Object visit(IntegerType n, Object argu) throws Exception{
        return n.f0.toString();
     }
 
 	/**
 	* f0 -> <IDENTIFIER>
 	*/
-	public Object visit(Identifier n, Object argu) {
+	public Object visit(Identifier n, Object argu) throws Exception{
 		return n.f0.toString();
 	}
 
