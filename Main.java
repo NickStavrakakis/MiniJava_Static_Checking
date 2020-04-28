@@ -45,6 +45,8 @@ class Main {
 			}
 			catch(Exception ex){
 			    System.err.println("\u001B[31m" + ex.getMessage() + "\u001B[0m");
+				if (ex.getMessage().equals("null"))
+					ex.printStackTrace();
 			}
 			finally{
 			    try{

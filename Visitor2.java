@@ -34,7 +34,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f17 -> "}"
 	 */
 	public Object visit(MainClass n, Object argu) throws Exception{
-		/*v*/System.out.println("MainClass");
+		///*flg*/System.out.println("MainClass");
 
 		String className = n.f1.accept(this, null).toString();
 		currClassName = className;
@@ -51,7 +51,12 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 		}
 
 
-		n.f15.accept(this, argu);
+		if (n.f15.present()){
+			int totalStatements = n.f15.size();
+			for (int currStatementPos = 0; currStatementPos < totalStatements; currStatementPos++){
+				n.f15.elementAt(currStatementPos).accept(this, argu);
+			}
+		}
 
 
 		return null;
@@ -66,7 +71,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f5 -> "}"
 	 */
 	public Object visit(ClassDeclaration n, Object argu) throws Exception{
-		/*v*/System.out.println("ClassDeclaration");
+		///*flg*/System.out.println("ClassDeclaration");
 
 		String className = n.f1.accept(this, null).toString();
 		currClassName = className;
@@ -102,7 +107,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f7 -> "}"
 	 */
 	public Object visit(ClassExtendsDeclaration n, Object argu) throws Exception{
-		/*v*/System.out.println("ClassExtendsDeclaration");
+		///*flg*/System.out.println("ClassExtendsDeclaration");
 
 		String className = n.f1.accept(this, null).toString();
 		currClassName = className;
@@ -157,7 +162,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 */
 	public Object visit(MethodDeclaration n, Object argu) throws Exception{
 		/* argu = Method's Class Name + < + Method's Class Extender Name if exists*/
-		/*v*/System.out.println("MethodDeclaration");
+		///*flg*/ System.out.println("MethodDeclaration " + argu.toString());
 
 		String[] parts = argu.toString().split("<");
 		String className = parts[0];
@@ -169,8 +174,8 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 
 
 		String methodName = n.f2.accept(this, null).toString();
-		currMethodName = className + "." + methodName;
-
+		String fullMethodName = className + "." + methodName;
+		currMethodName = fullMethodName;
 
 		n.f4.accept(this, null);
 
@@ -186,13 +191,12 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 		if (n.f8.present()){
 			int totalStatements = n.f8.size();
 			for (int currStatementPos = 0; currStatementPos < totalStatements; currStatementPos++){
-				n.f8.elementAt(currStatementPos).accept(this, className + "." + methodName);
+				n.f8.elementAt(currStatementPos).accept(this,fullMethodName);
 			}
 		}
 
 
-		String retType = n.f10.accept(this, className + "." + methodName).toString();
-		System.out.println("violet 1");
+		String retType = n.f10.accept(this, fullMethodName).toString();
 		parts = retType.split("\\|");
 		if (parts.length == 2)
 			retType = parts[1];
@@ -204,8 +208,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 
 		}
 
-		System.out.println("violet 13");
-		return null;
+		return fullMethodName;
 	}
 
 	/**
@@ -261,7 +264,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 *		 | IntegerArrayType()
 	 */
 	public Object visit(ArrayType n, Object argu) throws Exception{
-		/*v*/System.out.println("ArrayType");
+		///*flg*/System.out.println("ArrayType");
 		// Can we remove this block?
 		return n.f0.accept(this, argu).toString();
 	}
@@ -272,7 +275,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f2 -> "]"
 	 */
 	public Object visit(BooleanArrayType n, Object argu) throws Exception{
-		/*v*/System.out.println("BooleanArrayType");
+		///*flg*/System.out.println("BooleanArrayType");
 
 		return n.f0.toString() + n.f1.toString() + n.f2.toString();
 	}
@@ -283,7 +286,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f2 -> "]"
 	 */
 	public Object visit(IntegerArrayType n, Object argu) throws Exception{
-		/*v*/System.out.println("IntegerArrayType");
+		///*flg*/System.out.println("IntegerArrayType");
 
 		return n.f0.toString() + n.f1.toString() + n.f2.toString();
 	}
@@ -292,7 +295,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f0 -> "boolean"
 	 */
 	public Object visit(BooleanType n, Object argu) throws Exception{
-		/*v*/System.out.println("BooleanType");
+		///*flg*/System.out.println("BooleanType");
 
 		return n.f0.toString();
 	}
@@ -301,7 +304,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f0 -> "int"
 	 */
 	public Object visit(IntegerType n, Object argu) throws Exception{
-		/*v*/System.out.println("IntegerType");
+		///*flg*/System.out.println("IntegerType");
 
 		return n.f0.toString();
 	}
@@ -312,7 +315,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f2 -> "}"
 	 */
 	public Object visit(Block n, Object argu) throws Exception{
-		/*v*/System.out.println("Block");
+		///*flg*/System.out.println("Block");
 
 		if (n.f1.present()){
 			int totalStatements = n.f1.size();
@@ -332,7 +335,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f3 -> ";"
 	 */
 	public Object visit(AssignmentStatement n, Object argu) throws Exception{
-		/*v*/System.out.println("AssignmentStatement");
+		///*flg*/System.out.println("AssignmentStatement");
 
 		// Remove this, it should never be null
 		if (n.f2.accept(this, argu)== null)
@@ -377,7 +380,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 
 	 //FIX THIS ALSO BOOLEAN && ARRAY length
 	public Object visit(ArrayAssignmentStatement n, Object argu) throws Exception{
-		/*v*/System.out.println("ArrayAssignmentStatement");
+		///*flg*/System.out.println("ArrayAssignmentStatement");
 
 
 		String exType = n.f0.accept(this, argu).toString();
@@ -431,7 +434,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f6 -> Statement()
 	 */
 	public Object visit(IfStatement n, Object argu) throws Exception{
-		/*v*/System.out.println("IfStatement");
+		///*flg*/System.out.println("IfStatement");
 
 		// Remove this, it should never be null
 		if (n.f2.accept(this, argu)== null)
@@ -450,6 +453,9 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 
 		}
 
+		n.f4.accept(this, argu);
+
+		n.f6.accept(this, argu);
 
 		return null;
 	}
@@ -462,7 +468,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f4 -> Statement()
 	 */
 	public Object visit(WhileStatement n, Object argu) throws Exception{
-		/*v*/System.out.println("WhileStatement");
+		///*flg*/System.out.println("WhileStatement");
 
 		// Remove this, it shoul never be null
 		if (n.f2.accept(this, argu)== null)
@@ -495,7 +501,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f4 -> ";"
 	 */
 	public Object visit(PrintStatement n, Object argu) throws Exception{
-		/*v*/System.out.println("PrintStatement");
+		///*flg*/System.out.println("PrintStatement");
 
 		String exType = n.f2.accept(this, argu).toString();
 		String[] parts = exType.split("\\|");
@@ -519,7 +525,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f2 -> Clause()
 	 */
 	public Object visit(AndExpression n, Object argu) throws Exception{
-		/*v*/System.out.println("AndExpression");
+		///*flg*/System.out.println("AndExpression");
 
 		String clauseTypeLeft = n.f0.accept(this, argu).toString();
 		String clauseTypeRight = n.f2.accept(this, argu).toString();
@@ -552,7 +558,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f2 -> PrimaryExpression()
 	 */
 	public Object visit(CompareExpression n, Object argu) throws Exception{
-		/*v*/System.out.println("CompareExpression");
+		///*flg*/System.out.println("CompareExpression");
 
 		String exTypeLeft = n.f0.accept(this, argu).toString();
 		String exTypeRight = n.f2.accept(this, argu).toString();
@@ -585,7 +591,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f2 -> PrimaryExpression()
 	 */
 	public Object visit(PlusExpression n, Object argu) throws Exception{
-		/*v*/System.out.println("PlusExpression");
+		///*flg*/System.out.println("PlusExpression");
 
 		String exTypeLeft = n.f0.accept(this, argu).toString();
 		String exTypeRight = n.f2.accept(this, argu).toString();
@@ -618,7 +624,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f2 -> PrimaryExpression()
 	 */
 	public Object visit(MinusExpression n, Object argu) throws Exception{
-		/*v*/System.out.println("MinusExpression");
+		///*flg*/System.out.println("MinusExpression");
 
 
 		String exTypeLeft = n.f0.accept(this, argu).toString();
@@ -651,7 +657,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f2 -> PrimaryExpression()
 	 */
 	public Object visit(TimesExpression n, Object argu) throws Exception{
-		/*v*/System.out.println("TimesExpression");
+		///*flg*/System.out.println("TimesExpression");
 
 
 		String exTypeLeft = n.f0.accept(this, argu).toString();
@@ -683,7 +689,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f3 -> "]"
 	 */
 	public Object visit(ArrayLookup n, Object argu) throws Exception{
-		/*v*/System.out.println("ArrayLookup");
+		///*flg*/System.out.println("ArrayLookup");
 
 		String exTypeLeft = n.f0.accept(this, argu).toString();
 		String exTypeRight = n.f2.accept(this, argu).toString();
@@ -726,7 +732,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f2 -> "length"
 	 */
 	public Object visit(ArrayLength n, Object argu) throws Exception{
-		/*v*/System.out.println("ArrayLength");
+		///*flg*/System.out.println("ArrayLength");
 
 		String exType = n.f0.accept(this, argu).toString();
 		String[] parts = exType.split("\\|");
@@ -755,10 +761,9 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f5 -> ")"
 	 */
 	public Object visit(MessageSend n, Object argu) throws Exception{
-		/*v*/System.out.println("MessageSend");
+		///*flg*/System.out.println("MessageSend");
 
 		String exType = n.f0.accept(this, argu).toString();
-		System.out.println("------>" + exType);
 		String[] parts = exType.split("\\|");
 		if (parts.length == 2)
 			exType = parts[1];
@@ -806,7 +811,6 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 					// apply this kai sta ypoloipa
 					boolean flag = true;
 					for (int currParentClasseNamePos = 0; currParentClasseNamePos < parentClassNames.length; currParentClasseNamePos++){
-						System.out.println(parentClassNames[currParentClasseNamePos] + " = " +  currMethod.parTypes[currExPos]);
 
 						if (parentClassNames[currParentClasseNamePos].equals(currMethod.parTypes[currExPos]))
 							flag = false;
@@ -831,7 +835,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f1 -> ExpressionTail()
 	 */
 	public Object visit(ExpressionList n, Object argu) throws Exception{
-		/*v*/System.out.println("ExpressionList");
+		///*flg*/System.out.println("ExpressionList");
 
 		Object currEx = n.f0.accept(this, argu);
 		Object currExTail = n.f1.accept(this, argu);
@@ -847,7 +851,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
      * f0 -> ( ExpressionTerm() )*
      */
     public Object visit(ExpressionTail n, Object argu) throws Exception{
-		/*v*/System.out.println("ExpressionTail");
+		///*flg*/System.out.println("ExpressionTail");
 
 		int totalExprs = n.f0.size();
 		String currExTail = "";
@@ -864,7 +868,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f1 -> Expression()
 	 */
 	public Object visit(ExpressionTerm n, Object argu) throws Exception{
-		/*v*/System.out.println("ExpressionTerm" );
+		///*flg*/System.out.println("ExpressionTerm" );
 		return n.f1.accept(this, argu);
 	}
 
@@ -872,7 +876,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f0 -> <INTEGER_LITERAL>
 	 */
 	public Object visit(IntegerLiteral n, Object argu) throws Exception{
-		/*v*/System.out.println("IntegerLiteral " + n.f0.toString());
+		///*flg*/System.out.println("IntegerLiteral " + n.f0.toString());
 		return "int";
 	}
 
@@ -894,7 +898,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f0 -> <IDENTIFIER>
 	 */
 	public String visit(Identifier n, Object argu) throws Exception{
-		/*v*/System.out.println("Identifier (" + n.f0.toString() +")");
+		///*flg*/System.out.println("Identifier (" + n.f0.toString() +")");
 
 		if (argu != null){
 			return n.f0.toString() + "|" + st.getVarType(argu.toString(), n.f0.toString());
@@ -919,7 +923,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f4 -> "]"
 	 */
 	public Object visit(BooleanArrayAllocationExpression n, Object argu) throws Exception{
-		/*v*/System.out.println("BooleanArrayAllocationExpression");
+		///*flg*/System.out.println("BooleanArrayAllocationExpression");
 
 
 		String exType = n.f3.accept(this, argu).toString();
@@ -947,7 +951,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f4 -> "]"
 	 */
 	public Object visit(IntegerArrayAllocationExpression n, Object argu) throws Exception{
-		/*v*/System.out.println("IntegerArrayAllocationExpression");
+		///*flg*/System.out.println("IntegerArrayAllocationExpression");
 
 
 		String exType = n.f3.accept(this, argu).toString();
@@ -974,7 +978,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f3 -> ")"
 	 */
 	public Object visit(AllocationExpression n, Object argu) throws Exception{
-		/*v*/System.out.println("AllocationExpression");
+		///*flg*/System.out.println("AllocationExpression");
 
 		String idName = n.f1.accept(this, null).toString();
 		Hashtable<String, Class> stClasses = st.getClasses();
@@ -991,7 +995,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f1 -> Clause()
 	 */
 	public Object visit(NotExpression n, Object argu) throws Exception{
-		/*v*/System.out.println("NotExpression");
+		///*flg*/System.out.println("NotExpression");
 
 		// Remove this, it should never be null
 		if (n.f1.accept(this, argu)== null)
@@ -1020,7 +1024,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 * f2 -> ")"
 	 */
 	public Object visit(BracketExpression n, Object argu) throws Exception{
-		/*v*/System.out.println("BracketExpression");
+		///*flg*/System.out.println("BracketExpression");
 
 		return n.f1.accept(this, argu);
 	}

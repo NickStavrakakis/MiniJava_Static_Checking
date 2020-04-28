@@ -270,10 +270,11 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
 
 
  	   String methodName = n.f2.accept(this, className).toString();
+	   String fullMethodName = className + "." + methodName;
  	   /* Checking also if the method is already defined */
  	   Hashtable<String, Method> stMethods = st.getMethods();
- 	   if (stMethods.get(className + "." + methodName) != null){
- 		   System.out.println("\tMultiple Definition: " + className + "." + methodName);
+ 	   if (stMethods.get(fullMethodName) != null){
+ 		   System.out.println("\tMultiple Definition: " + fullMethodName);
  		   System.exit(1);
  	   }
 
@@ -284,13 +285,11 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
  	   if (n.f4.present()){
  		   Object parameterList = n.f4.accept(this, className);
  		   String[] parameters = parameterList.toString().split(",");
-		   System.out.println("\t\t\tparameterList: " + parameterList.toString());
 
  		   totalPars = parameters.length;
  		   parTypes = new String[totalPars];
  		   parNames = new String[totalPars];
  		   for (int currParPos = 0; currParPos < totalPars; currParPos++){
-		   System.out.println("\t\t\totalPars: " + totalPars);
  			   String[] currPar = parameters[currParPos].split(" ");
  			   parTypes[currParPos] = currPar[0];
  			   parNames[currParPos] = currPar[1];
@@ -299,7 +298,7 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
  		   for (int i = 0; i < totalPars; i++){
  			   for (int j = 0; j < totalPars; j++){
  				   if ((i != j) && (parNames[i].equals(parNames[j]))){
- 					   System.out.println("\tMultiple Definition: " + className + "." + methodName + "." + parNames[i]);
+ 					   System.out.println("\tMultiple Definition: " + fullMethodName + "." + parNames[i]);
  					   System.exit(1);
  				   }
  			   }
@@ -322,13 +321,13 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
  		   for (int i = 0; i < totalVars; i++){
  			   for (int j = 0; j < totalPars; j++){
  				   if (varNames[i].equals(parNames[j])){
- 					   System.out.println("\tMultiple Definition: " + className + "." + methodName + "." + varNames[i]);
+ 					   System.out.println("\tMultiple Definition: " + fullMethodName + "." + varNames[i]);
  					   System.exit(1);
  				   }
  			   }
  			   for (int j = 0; j < totalVars; j++){
  				   if ((i != j) && (varNames[i].equals(varNames[j]))){
- 					   System.out.println("\tMultiple Definition: " + className + "." + methodName + "." + varNames[i]);
+ 					   System.out.println("\tMultiple Definition: " + fullMethodName + "." + varNames[i]);
  					   System.exit(1);
  				   }
  			   }
@@ -337,21 +336,21 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
 
 
  	   if (classExtendsName != null){
- 		   Method extenderCLassMethod = stMethods.get(classExtendsName + "." + methodName);
- 		   if (extenderCLassMethod != null){
- 			   if (extenderCLassMethod.type != methodType){
- 				   System.out.println("\tDifferent Method Type from superclass: " + className + "." + methodName);
+ 		   Method extenderClassMethod = stMethods.get(classExtendsName + "." + methodName);
+ 		   if (extenderClassMethod != null){
+ 			   if (extenderClassMethod.type != methodType){
+ 				   System.out.println("\tDifferent Method Type from superclass: " + fullMethodName);
  				   System.exit(1);
  			   }
  			   else{
  				   for (int i = 0; i < totalPars; i++){
- 					   for (int j = 0; j < extenderCLassMethod.parNames.length; j++){
- 						   if (!parTypes[i].equals(extenderCLassMethod.parTypes[j])){
- 							   System.out.println("\tDifferent Variable Type from superclass: " + className + "." + methodName + "." + parTypes[i] + "." + parNames[i]);
+ 					   for (int j = 0; j < extenderClassMethod.parNames.length; j++){
+ 						   if (!parTypes[i].equals(extenderClassMethod.parTypes[j])){
+ 							   System.out.println("\tDifferent Variable Type from superclass: " + fullMethodName + "." + parTypes[i] + "." + parNames[i]);
  							   System.exit(1);
  						   }
- 						   if (!parNames[i].equals(extenderCLassMethod.parNames[j])){
- 							   System.out.println("\tDifferent Variable Name from superclass: " + className + "." + methodName + "." + parTypes[i] + "." + parNames[i]);
+ 						   if (!parNames[i].equals(extenderClassMethod.parNames[j])){
+ 							   System.out.println("\tDifferent Variable Name from superclass: " + fullMethodName + "." + parTypes[i] + "." + parNames[i]);
  							   System.exit(1);
  						   }
  					   }
@@ -364,13 +363,13 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
  	   /* ---------METHODS--------- */
  	   /* Creating the information class for the main method */
  	   Method currMethod = new Method();
- 	   currMethod.addMethod(methodType, className + "." + methodName, argu.toString(), parTypes, parNames, varTypes, varNames);
+ 	   currMethod.addMethod(methodType, fullMethodName, className, parTypes, parNames, varTypes, varNames);
  	   /* Inserting this class in our Methods' Hashtable */
  	   //Hashtable<String, Method> stMethods = st.getMethods();
- 	   stMethods.put(className + "." + methodName, currMethod);
+ 	   stMethods.put(fullMethodName, currMethod);
 
 
- 	   return methodName;
+ 	   return fullMethodName;
     }
 
 	/**
