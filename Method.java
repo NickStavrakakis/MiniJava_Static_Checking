@@ -21,6 +21,7 @@ public class Method {
 			varTypes = mVarTypes.clone();
 		if (mVarNames != null)
 			varNames = mVarNames.clone();
+
 	}
 
 }

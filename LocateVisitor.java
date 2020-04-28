@@ -80,7 +80,7 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
 		/* ---------METHODS--------- */
 		/* Creating the information class for the main method */
 		Method currMethod = new Method();
-		currMethod.addMethod(null, mainMethod[0], className, methodIdTypes, methodIdNames, varTypes, varNames);
+		currMethod.addMethod(null, className + "." + mainMethod[0], className, methodIdTypes, methodIdNames, varTypes, varNames);
 		/* Inserting this class in our Methods' Hashtable */
 		Hashtable<String, Method> stMethods = st.getMethods();
 		stMethods.put(className + "." + mainMethod[0], currMethod);
@@ -366,6 +366,7 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
  	   currMethod.addMethod(methodType, fullMethodName, className, parTypes, parNames, varTypes, varNames);
  	   /* Inserting this class in our Methods' Hashtable */
  	   //Hashtable<String, Method> stMethods = st.getMethods();
+
  	   stMethods.put(fullMethodName, currMethod);
 
 

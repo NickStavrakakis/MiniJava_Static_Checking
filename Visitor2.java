@@ -39,6 +39,8 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 		String className = n.f1.accept(this, null).toString();
 		currClassName = className;
 
+		String fullMethodName = className + ".main";
+		currMethodName = fullMethodName;
 
 		n.f11.accept(this, null);
 
@@ -46,7 +48,9 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 		if (n.f14.present()){
 			int totalVars = n.f14.size();
 			for (int currVarPos = 0; currVarPos < totalVars; currVarPos++){
-				n.f14.elementAt(currVarPos).accept(this, className);
+				//n.f14.elementAt(currVarPos).accept(this, className);
+				n.f14.elementAt(currVarPos).accept(this, fullMethodName);
+
 			}
 		}
 
@@ -54,7 +58,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 		if (n.f15.present()){
 			int totalStatements = n.f15.size();
 			for (int currStatementPos = 0; currStatementPos < totalStatements; currStatementPos++){
-				n.f15.elementAt(currStatementPos).accept(this, argu);
+				n.f15.elementAt(currStatementPos).accept(this, fullMethodName);
 			}
 		}
 
@@ -183,7 +187,9 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 		if (n.f7.present()){
 			int totalVars = n.f7.size();
 			for (int currVarPos = 0; currVarPos < totalVars; currVarPos++){
-				n.f7.elementAt(currVarPos).accept(this, className);
+				//n.f7.elementAt(currVarPos).accept(this, className);
+				n.f7.elementAt(currVarPos).accept(this, fullMethodName);
+
 			}
 		}
 
@@ -343,6 +349,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 
 		String exTypeLeft = n.f0.accept(this, argu).toString();
 		String exTypeRight = n.f2.accept(this, argu).toString();
+
 		String[] partsLeft = exTypeLeft.split("\\|");
 		String[] partsRight = exTypeRight.split("\\|");
 		if (partsLeft.length == 2)
@@ -358,9 +365,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 
 
 		if (!exTypeLeft.equals(exTypeRight)){
-			//System.out.println(exTypeLeft + "!=" + exTypeRight);
 			throw new Exception("\tIncompatible Type @AssignmentStatement");
-
 		}
 
 
@@ -773,8 +778,6 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 
 
 		String idName = n.f2.accept(this, null).toString();
-
-
 		if (exType.equals("int") || exType.equals("int[]") || exType.equals("boolean") || exType.equals("boolean[]")){
 			throw new Exception("\tExpected a class name type @MessageSend");
 
@@ -788,6 +791,20 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 
 		Hashtable<String, Method> stMethods = st.getMethods();
 		Method currMethod = stMethods.get(exType + "." + idName);
+		if (currMethod == null){
+			String[] parentClassNames = st.getParentClassesNames(exType);
+			boolean flag = true;
+			for (int currParentClasseNamePos = 0; currParentClasseNamePos < parentClassNames.length; currParentClasseNamePos++){
+				currMethod = stMethods.get(parentClassNames[currParentClasseNamePos] + "." + idName);
+				if (currMethod != null){
+					flag = false;
+					break;
+				}
+			}
+			if (flag){
+				throw new Exception("\tFind a good name @MessageSend " + exType);
+			}
+		}
 
 		if (n.f4.present()){
 			String exList = n.f4.accept(this, argu).toString();
@@ -903,7 +920,6 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 		if (argu != null){
 			return n.f0.toString() + "|" + st.getVarType(argu.toString(), n.f0.toString());
 		}
-
 
 		return n.f0.toString();
 	}

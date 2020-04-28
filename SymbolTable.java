@@ -29,7 +29,6 @@ public class SymbolTable {
 	public String getVarType(String idName, String varName) throws Exception{
 		///*flg*/System.out.println("getVarType("+ idName +","+ varName+")");
 		Method currMethod = stMethods.get(idName);
-
 		if (currMethod != null){
 			if (currMethod.parNames != null){
 				int totalPars = currMethod.parNames.length;
@@ -41,8 +40,9 @@ public class SymbolTable {
 			if (currMethod.varNames != null){
 				int totalVars = currMethod.varNames.length;
 				for (int currVar = 0; currVar < totalVars; currVar++){
-					if (currMethod.varNames[currVar].equals(varName))
+					if (currMethod.varNames[currVar].equals(varName)){
 						return currMethod.varTypes[currVar];
+					}
 				}
 			}
 			Class currClass = stClasses.get(currMethod.nameClass);
@@ -66,6 +66,7 @@ public class SymbolTable {
 			throw new Exception("\t(a) Variable does not exist: " + idName + "." + varName);
 		}
 
+
 		Class currClass = stClasses.get(idName);
 		if (currClass != null){
 			int totalVars = currClass.varNames.length;
@@ -74,14 +75,14 @@ public class SymbolTable {
 					return currClass.varTypes[currVar];
 			}
 
-
 			throw new Exception("\t(b) Variable does not exist: " + idName + "." + varName);
 		}
+
 		return null;
 	}
 
 	public String[] getParentClassesNames(String className){
-		///*flg*/System.out.println("getParentClassesNames("+ className+")");
+		/////*flg*/System.out.println("getParentClassesNames("+ className+")");
 
 		String parentClassNamesList = "";
 		Class currClass = stClasses.get(className);
@@ -90,6 +91,7 @@ public class SymbolTable {
 			parentClassNamesList = currClass.nameExtends + "|" + parentClassNamesList;
 			currClass = stClasses.get(currClass.nameExtends);
 		}
+		//System.out.println("will return " + parentClassNamesList);
 		return parentClassNamesList.split("\\|");
 	}
 
