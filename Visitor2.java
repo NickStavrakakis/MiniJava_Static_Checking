@@ -166,7 +166,7 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 	 */
 	public Object visit(MethodDeclaration n, Object argu) throws Exception{
 		/* argu = Method's Class Name + < + Method's Class Extender Name if exists*/
-		///*flg*/ System.out.println("MethodDeclaration " + argu.toString());
+		///*flg*/ System.out.println("MethodDeclaration");
 
 		String[] parts = argu.toString().split("<");
 		String className = parts[0];
@@ -365,9 +365,27 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 
 
 		if (!exTypeLeft.equals(exTypeRight)){
-			throw new Exception("\tIncompatible Type @AssignmentStatement");
-		}
+			String[] parentClassNames = st.getParentClassesNames(exTypeLeft);
+			boolean flag = true;
+			for (int currParentClasseNamePos = 0; currParentClasseNamePos < parentClassNames.length; currParentClasseNamePos++){
+				if (parentClassNames[currParentClasseNamePos].equals(exTypeRight)){
+					flag = false;
+					break;
+				}
+			}
 
+			if (flag){
+				parentClassNames = st.getParentClassesNames(exTypeRight);
+				for (int currParentClasseNamePos = 0; currParentClasseNamePos < parentClassNames.length; currParentClasseNamePos++){
+					if (parentClassNames[currParentClasseNamePos].equals(exTypeLeft)){
+						flag = false;
+						break;
+					}
+				}
+				if (flag)
+					throw new Exception("\tIncompatible Type @AssignmentStatement");
+			}
+		}
 
 		return null;
 	}
@@ -810,10 +828,19 @@ public class Visitor2 extends GJDepthFirst<Object, Object>{
 			String exList = n.f4.accept(this, argu).toString();
 			parts = exList.split(",");
 			int totalPars = currMethod.parNames.length;
-			if (parts.length != currMethod.parTypes.length){
-				/// do the same smqhere else
-				throw new Exception("\tWrong number of arguments @MessageSend");
+			/// do the same smqhere else
+			if(currMethod.parTypes == null){
+				if (parts != null)
+					throw new Exception("\tWrong number of arguments @MessageSend");
 			}
+			else{
+				if (parts == null)
+					throw new Exception("\tWrong number of arguments @MessageSend");
+				else if (parts.length != currMethod.parTypes.length)
+					throw new Exception("\tWrong number of arguments @MessageSend");
+			}
+
+
 			for(int currExPos = 0; currExPos < parts.length; currExPos++){
 				String currExType = parts[currExPos];
 				String[] currParts = currExType.split("\\|");

@@ -78,21 +78,25 @@ public class SymbolTable {
 			throw new Exception("\t(b) Variable does not exist: " + idName + "." + varName);
 		}
 
-		return null;
+		throw new Exception("\t(c) Variable does not exist: " + idName + "." + varName);
 	}
 
 	public String[] getParentClassesNames(String className){
-		/////*flg*/System.out.println("getParentClassesNames("+ className+")");
+		///*flg*/System.out.println("getParentClassesNames("+ className+")");
 
 		String parentClassNamesList = "";
 		Class currClass = stClasses.get(className);
-
-		while (currClass.nameExtends != null){
-			parentClassNamesList = currClass.nameExtends + "|" + parentClassNamesList;
-			currClass = stClasses.get(currClass.nameExtends);
+		if(currClass != null){
+			while (currClass.nameExtends != null){
+				parentClassNamesList = currClass.nameExtends + "|" + parentClassNamesList;
+				currClass = stClasses.get(currClass.nameExtends);
+				if(currClass == null)
+					break;
+			}
 		}
-		//System.out.println("will return " + parentClassNamesList);
+		///*flg*/System.out.println("will return " + parentClassNamesList);
 		return parentClassNamesList.split("\\|");
+
 	}
 
 }

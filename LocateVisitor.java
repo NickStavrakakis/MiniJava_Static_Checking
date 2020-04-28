@@ -58,8 +58,8 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
 			for (int i = 0; i < totalVars; i++){
 				for (int j = 0; j < totalVars; j++){
 					if ((i != j) && (varNames[i].equals(varNames[j]))){
-			 			System.out.println("\tMultiple Definition: " + className + "." + varNames[i]);
-						System.exit(1);
+			 			throw new Exception("\tMultiple Definition: " + className + "." + varNames[i]);
+
 					}
 				}
 			}
@@ -105,8 +105,8 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
  	   /* Checking also if the class is already defined */
  	   Hashtable<String, Class> stClasses = st.getClasses();
  	   if (stClasses.get(className) != null){
- 		   System.out.println("\tMultiple Definition: " + className);
- 		   System.exit(1);
+ 		   throw new Exception("\tMultiple Definition: " + className);
+
  	   }
 
 
@@ -125,8 +125,8 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
  		   for (int i = 0; i < totalVars; i++){
  			   for (int j = 0; j < totalVars; j++){
  				   if ((i != j) && (varNames[i].equals(varNames[j]))){
- 					   System.out.println("\tMultiple Definition: " + className + "." + varNames[i]);
- 					   System.exit(1);
+ 					   throw new Exception("\tMultiple Definition: " + className + "." + varNames[i]);
+
  				   }
  			   }
  		   }
@@ -172,8 +172,8 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
   	  /* Checking also if the class is already defined */
   	  Hashtable<String, Class> stClasses = st.getClasses();
   	  if (stClasses.get(className) != null){
-  		  System.out.println("\tMultiple Definition: " + className);
-  		  System.exit(1);
+  		  throw new Exception("\tMultiple Definition: " + className);
+
   	  }
 
 
@@ -181,8 +181,8 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
   	  /* Checking also if the extend class has been defined */
   	  // Hashtable<String, Class> stClasses = st.getClasses();
   	  if (stClasses.get(classExtendsName) == null){
-  		  System.out.println("\tMissing Declaration: " + classExtendsName);
-  		  System.exit(1);
+  		  throw new Exception("\tMissing Declaration: " + classExtendsName);
+
   	  }
 
 
@@ -201,8 +201,8 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
   		  for (int i = 0; i < totalVars; i++){
   			  for (int j = 0; j < totalVars; j++){
   				  if ((i != j) && (varNames[i].equals(varNames[j]))){
-  					  System.out.println("\tMultiple Definition: " + className + "." + varNames[i]);
-  					  System.exit(1);
+  					  throw new Exception("\tMultiple Definition: " + className + "." + varNames[i]);
+
   				  }
   			  }
   		  }
@@ -274,8 +274,8 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
  	   /* Checking also if the method is already defined */
  	   Hashtable<String, Method> stMethods = st.getMethods();
  	   if (stMethods.get(fullMethodName) != null){
- 		   System.out.println("\tMultiple Definition: " + fullMethodName);
- 		   System.exit(1);
+ 		   throw new Exception("\tMultiple Definition: " + fullMethodName);
+
  	   }
 
 
@@ -298,8 +298,8 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
  		   for (int i = 0; i < totalPars; i++){
  			   for (int j = 0; j < totalPars; j++){
  				   if ((i != j) && (parNames[i].equals(parNames[j]))){
- 					   System.out.println("\tMultiple Definition: " + fullMethodName + "." + parNames[i]);
- 					   System.exit(1);
+ 					   throw new Exception("\tMultiple Definition: " + fullMethodName + "." + parNames[i]);
+
  				   }
  			   }
  		   }
@@ -321,40 +321,46 @@ public class LocateVisitor extends GJDepthFirst<Object, Object>{
  		   for (int i = 0; i < totalVars; i++){
  			   for (int j = 0; j < totalPars; j++){
  				   if (varNames[i].equals(parNames[j])){
- 					   System.out.println("\tMultiple Definition: " + fullMethodName + "." + varNames[i]);
- 					   System.exit(1);
+ 					   throw new Exception("\tMultiple Definition: " + fullMethodName + "." + varNames[i]);
+
  				   }
  			   }
  			   for (int j = 0; j < totalVars; j++){
  				   if ((i != j) && (varNames[i].equals(varNames[j]))){
- 					   System.out.println("\tMultiple Definition: " + fullMethodName + "." + varNames[i]);
- 					   System.exit(1);
+ 					   throw new Exception("\tMultiple Definition: " + fullMethodName + "." + varNames[i]);
+
  				   }
  			   }
  		   }
  	   }
-
-
  	   if (classExtendsName != null){
  		   Method extenderClassMethod = stMethods.get(classExtendsName + "." + methodName);
+
  		   if (extenderClassMethod != null){
  			   if (extenderClassMethod.type != methodType){
- 				   System.out.println("\tDifferent Method Type from superclass: " + fullMethodName);
- 				   System.exit(1);
+ 				   throw new Exception("\tDifferent Method Type from superclass: " + fullMethodName);
+
  			   }
- 			   else{
- 				   for (int i = 0; i < totalPars; i++){
- 					   for (int j = 0; j < extenderClassMethod.parNames.length; j++){
- 						   if (!parTypes[i].equals(extenderClassMethod.parTypes[j])){
- 							   System.out.println("\tDifferent Variable Type from superclass: " + fullMethodName + "." + parTypes[i] + "." + parNames[i]);
- 							   System.exit(1);
- 						   }
- 						   if (!parNames[i].equals(extenderClassMethod.parNames[j])){
- 							   System.out.println("\tDifferent Variable Name from superclass: " + fullMethodName + "." + parTypes[i] + "." + parNames[i]);
- 							   System.exit(1);
- 						   }
- 					   }
- 				   }
+			   if(extenderClassMethod.parNames == null){
+				   if (totalPars != 0)
+					   throw new Exception("\tWrong number of arguments @MethodDeclaration");
+			   }
+			   else{
+				   if (totalPars != extenderClassMethod.parNames.length)
+				   throw new Exception("\tWrong number of arguments @MethodDeclaration");
+			   }
+
+			   for (int i = 0; i < totalPars; i++){
+				   for (int j = 0; j < extenderClassMethod.parNames.length; j++){
+					   if (!parTypes[i].equals(extenderClassMethod.parTypes[j])){
+						   throw new Exception("\tDifferent Variable Type from superclass: " + fullMethodName + "." + parTypes[i] + "." + parNames[i]);
+
+					   }
+					   if (!parNames[i].equals(extenderClassMethod.parNames[j])){
+						   throw new Exception("\tDifferent Variable Name from superclass: " + fullMethodName + "." + parTypes[i] + "." + parNames[i]);
+
+					   }
+				   }
  			   }
  		   }
  	   }

@@ -37,6 +37,22 @@ run_minijava-extra:
 	 ../TestFiles/minijava-extra/test93.java \
 	 ../TestFiles/minijava-extra/test99.java
 
+run_minijava-error-extra:
+	java Main ../TestFiles/minijava-error-extra/BadAssign2.java \
+	../TestFiles/minijava-error-extra/BadAssign.java \
+	../TestFiles/minijava-error-extra/Classes-error.java \
+	../TestFiles/minijava-error-extra/DoubleDeclaration1.java \
+	../TestFiles/minijava-error-extra/DoubleDeclaration4.java \
+	../TestFiles/minijava-error-extra/DoubleDeclaration6.java \
+	../TestFiles/minijava-error-extra/NoMatchingMethod.java \
+	../TestFiles/minijava-error-extra/NoMethod.java \
+	../TestFiles/minijava-error-extra/Overload1.java \
+	../TestFiles/minijava-error-extra/test18.java \
+	../TestFiles/minijava-error-extra/test21.java \
+	../TestFiles/minijava-error-extra/test35.java \
+	../TestFiles/minijava-error-extra/test52.java \
+	../TestFiles/minijava-error-extra/test68.java \
+	../TestFiles/minijava-error-extra/UseArgs.java
 
 build: jars compile
 
