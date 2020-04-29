@@ -2,10 +2,14 @@ import syntaxtree.*;
 import visitor.*;
 import java.io.*;
 import visitors.*;
+import types.ClassInfo;
+import types.MethodInfo;
 import types.SymbolTable;
+import java.util.Hashtable;
+import java.util.Set;
 
 class Main {
-    public static void main (String [] args){
+	public static void main (String [] args){
 
 		SymbolTable st = new SymbolTable();
 
@@ -23,14 +27,14 @@ class Main {
 
 				String currFileName = args[arg];
 
-			    fis_A = new FileInputStream(currFileName);
-			    MiniJavaParser parser_A = new MiniJavaParser(fis_A);
+				fis_A = new FileInputStream(currFileName);
+				MiniJavaParser parser_A = new MiniJavaParser(fis_A);
 				System.err.println("\n" + currFileName + " parsed successfully.");
 
-			    DefCollectVisitor visitor_A = new DefCollectVisitor();
-			    Goal root_A = parser_A.Goal();
+				DefCollectVisitor visitor_A = new DefCollectVisitor();
+				Goal root_A = parser_A.Goal();
 				root_A.accept(visitor_A, null);
-				st =  visitor_A.st;
+				st = visitor_A.st;
 				System.out.println("\tVisitor A ended successfully");
 
 				fis_B = new FileInputStream(currFileName);
@@ -39,6 +43,114 @@ class Main {
 				Goal root_B = parser_B.Goal();
 				root_B.accept(visitor_B, null);
 				System.out.println("\tVisitor B ended successfully");
+
+
+				/* ---------PRINTING OFFSETS--------- */
+
+				/* creating hashtables to store the offsets for every class */
+				Hashtable<String, Integer> varOffsets = new Hashtable<String, Integer>();
+				Hashtable<String, Integer> methOffsets = new Hashtable<String, Integer>();
+
+				Hashtable<String, ClassInfo> stClasses = st.getClasses();
+				Hashtable<String, MethodInfo> stMethods = st.getMethods();
+
+				Set<String> keys = stClasses.keySet();
+				boolean skipped_main = false;
+		        for (String key: keys){
+
+					ClassInfo currClass = stClasses.get(key);
+					if (skipped_main != true) {
+						if (currFileName.endsWith("/" + currClass.name + ".java")){
+							skipped_main = true;
+							continue;
+						}
+					}
+		           	System.out.println("-----------Class " + currClass.name + " -----------");
+
+
+					/* ---------VARIABLES--------- */
+					System.out.println("--Variables---");
+
+
+					/* if it's missing, add current class to the offset Hashtable */
+					if (varOffsets.get(currClass.name) == null)
+						varOffsets.put(currClass.name, 0);
+
+
+					/* if has a super class, take its offset count */
+					int varOffsetCounter;
+					if (currClass.nameExtends != null)
+						varOffsetCounter = varOffsets.get(currClass.nameExtends);
+					else
+						varOffsetCounter = varOffsets.get(currClass.name);
+
+
+					if (currClass.varNames != null){
+						int totalVars = currClass.varNames.length;
+						for (int currVarPos = 0; currVarPos < totalVars; currVarPos++){
+			            	System.out.println(currClass.name + "." + currClass.varNames[currVarPos] + " : " + varOffsetCounter);
+							switch(currClass.varTypes[currVarPos]) {
+								case "int":
+									varOffsetCounter = varOffsetCounter + 4;
+									break;
+								case "boolean":
+									varOffsetCounter = varOffsetCounter + 1;
+									break;
+								default:
+									varOffsetCounter = varOffsetCounter + 8;
+							}
+						}
+						varOffsets.replace(currClass.name, varOffsetCounter);
+					}
+					/* if has a super class, update its offset count */
+					if (currClass.nameExtends != null)
+						varOffsets.replace(currClass.nameExtends, varOffsetCounter);
+					varOffsets.replace(currClass.name, varOffsetCounter);
+
+
+					/* ----------METHODS---------- */
+					System.out.println("---Methods---");
+
+
+					/* if it's missing, add current class to the offset Hashtable */
+					if (methOffsets.get(currClass.name) == null)
+						methOffsets.put(currClass.name, 0);
+
+
+					/* if has a super class, take its offset count */
+					int methOffsetCounter;
+					if (currClass.nameExtends != null)
+						methOffsetCounter = methOffsets.get(currClass.nameExtends);
+					else
+						methOffsetCounter = methOffsets.get(currClass.name);
+
+
+					if (currClass.methods != null){
+						for (String method: currClass.methods){
+							String[] parts = method.split("\\.");
+							String[] parentClassNames = st.getParentClassesNames(parts[0]);
+							boolean inheritanceExist = false;
+							//change currClass.nameExtends
+							for (int currParentClasseNamePos = 0; currParentClasseNamePos < parentClassNames.length; currParentClasseNamePos++){
+								if (stMethods.get(parentClassNames[currParentClasseNamePos] + "." + parts[1]) != null){
+									inheritanceExist = true;
+									break;
+								}
+							}
+							if (inheritanceExist != true){
+			            		System.out.println(method + " : " + methOffsetCounter);
+								methOffsetCounter = methOffsetCounter + 8;
+							}
+						}
+					}
+					/* if has a super class, update its offset count */
+					if (currClass.nameExtends != null)
+						methOffsets.replace(currClass.nameExtends, methOffsetCounter);
+					methOffsets.replace(currClass.name, methOffsetCounter);
+
+
+					System.out.println();
+		        }
 
 			}
 			catch(ParseException ex){

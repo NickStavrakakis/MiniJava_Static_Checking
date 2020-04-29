@@ -54,6 +54,40 @@ run_minijava-error-extra:
 	../TestFiles/minijava-error-extra/test68.java \
 	../TestFiles/minijava-error-extra/UseArgs.java
 
+run_offset-examples:
+	java Main ../TestFiles/offsets/offset-examples/BinaryTree.java \
+	../TestFiles/offsets/offset-examples/BubbleSort.java \
+	../TestFiles/offsets/offset-examples/Extra/Add.java \
+	../TestFiles/offsets/offset-examples/Extra/ArrayTest.java \
+	../TestFiles/offsets/offset-examples/Extra/CallFromSuper.java \
+	../TestFiles/offsets/offset-examples/Extra/Classes.java \
+	../TestFiles/offsets/offset-examples/Extra/DerivedCall.java \
+	../TestFiles/offsets/offset-examples/Extra/Example1.java \
+	../TestFiles/offsets/offset-examples/Extra/FieldAndClassConflict.java \
+	../TestFiles/offsets/offset-examples/Extra/Main.java \
+	../TestFiles/offsets/offset-examples/Extra/ManyClasses.java \
+	../TestFiles/offsets/offset-examples/Extra/OutOfBounds1.java \
+	../TestFiles/offsets/offset-examples/Extra/Overload2.java \
+	../TestFiles/offsets/offset-examples/Extra/ShadowBaseField.java \
+	../TestFiles/offsets/offset-examples/Extra/ShadowField.java \
+	../TestFiles/offsets/offset-examples/Extra/test06.java \
+	../TestFiles/offsets/offset-examples/Extra/test07.java \
+	../TestFiles/offsets/offset-examples/Extra/test15.java \
+	../TestFiles/offsets/offset-examples/Extra/test17.java \
+	../TestFiles/offsets/offset-examples/Extra/test20.java \
+	../TestFiles/offsets/offset-examples/Extra/test62.java \
+	../TestFiles/offsets/offset-examples/Extra/test73.java \
+	../TestFiles/offsets/offset-examples/Extra/test82.java \
+	../TestFiles/offsets/offset-examples/Extra/test93.java \
+	../TestFiles/offsets/offset-examples/Extra/test99.java \
+	../TestFiles/offsets/offset-examples/Factorial.java \
+	../TestFiles/offsets/offset-examples/LinearSearch.java \
+	../TestFiles/offsets/offset-examples/LinkedList.java \
+	../TestFiles/offsets/offset-examples/MoreThan4.java \
+	../TestFiles/offsets/offset-examples/QuickSort.java \
+	../TestFiles/offsets/offset-examples/SiteExample/SiteExample.java \
+	../TestFiles/offsets/offset-examples/TreeVisitor.java
+
 build: jars compile
 
 jars:
