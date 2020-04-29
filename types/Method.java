@@ -1,3 +1,5 @@
+package types;
+
 public class Method {
 
 	public String type;

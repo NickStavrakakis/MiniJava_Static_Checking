@@ -1,3 +1,5 @@
+package types;
+
 public class Class {
 
 	public String name;
@@ -16,7 +18,7 @@ public class Class {
 			varTypes = cvarTypes.clone();
 		if (cvarNames != null)
 			varNames = cvarNames.clone();
-			
+
 	}
 
 }

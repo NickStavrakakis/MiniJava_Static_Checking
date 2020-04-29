@@ -61,11 +61,11 @@ jars:
 	java -jar lib/javacc5.jar minijava/minijava-jtb.jj
 
 compile:
-	javac Class.java
-	javac Method.java
-	javac SymbolTable.java
-	javac DefCollectVisitor.java
-	javac TypeCheckVisitor.java
+	javac types/Class.java
+	javac types/Method.java
+	javac types/SymbolTable.java
+	javac visitors/DefCollectVisitor.java
+	javac visitors/TypeCheckVisitor.java
 	javac Main.java
 
 clean:

@@ -1,6 +1,10 @@
+package visitors;
 import syntaxtree.*;
 import visitor.GJDepthFirst;
 import java.util.Hashtable;
+import types.Class;
+import types.Method;
+import types.SymbolTable;
 
 public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 

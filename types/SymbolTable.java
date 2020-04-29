@@ -1,5 +1,7 @@
+package types;
 import java.util.Hashtable;
-
+import types.Class;
+import types.Method;
 
 public class SymbolTable {
 
