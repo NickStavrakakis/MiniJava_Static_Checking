@@ -2,8 +2,8 @@ package visitors;
 import syntaxtree.*;
 import visitor.GJDepthFirst;
 import java.util.Hashtable;
-import types.Class;
-import types.Method;
+import types.ClassInfo;
+import types.MethodInfo;
 import types.SymbolTable;
 
 public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
@@ -751,12 +751,12 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		if (exType.equals("int") || exType.equals("int[]") || exType.equals("boolean") || exType.equals("boolean[]")){
 			throw new Exception("\tExpected a class name type @MessageSend");
 		}
-		Hashtable<String, Class> stClasses = st.getClasses();
+		Hashtable<String, ClassInfo> stClasses = st.getClasses();
 		if (stClasses.get(exType) == null){
 			throw new Exception("\tMissing class Declaration @MessageSend " + exType + " " + idName);
 		}
-		Hashtable<String, Method> stMethods = st.getMethods();
-		Method currMethod = stMethods.get(exType + "." + idName);
+		Hashtable<String, MethodInfo> stMethods = st.getMethods();
+		MethodInfo currMethod = stMethods.get(exType + "." + idName);
 		if (currMethod == null){
 			String[] parentClassNames = st.getParentClassesNames(exType);
 			boolean flag = true;
@@ -960,8 +960,8 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		///*flg*/System.out.println("AllocationExpression");
 
 		String idName = n.f1.accept(this, null).toString();
-		Hashtable<String, Class> stClasses = st.getClasses();
-		Class currClass = stClasses.get(idName);
+		Hashtable<String, ClassInfo> stClasses = st.getClasses();
+		ClassInfo currClass = stClasses.get(idName);
 		if (currClass == null){
 			throw new Exception("\tMissing Declaration @AllocationExpression: " + idName);
 		}

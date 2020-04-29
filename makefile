@@ -61,8 +61,8 @@ jars:
 	java -jar lib/javacc5.jar minijava/minijava-jtb.jj
 
 compile:
-	javac types/Class.java
-	javac types/Method.java
+	javac types/ClassInfo.java
+	javac types/MethodInfo.java
 	javac types/SymbolTable.java
 	javac visitors/DefCollectVisitor.java
 	javac visitors/TypeCheckVisitor.java

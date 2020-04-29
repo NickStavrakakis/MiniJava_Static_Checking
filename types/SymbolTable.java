@@ -1,25 +1,25 @@
 package types;
 import java.util.Hashtable;
-import types.Class;
-import types.Method;
+import types.ClassInfo;
+import types.MethodInfo;
 
 public class SymbolTable {
 
 
 	// explain this on readme
-	private Hashtable<String, Class> stClasses = new Hashtable<String, Class>();
-	private Hashtable<String, Method> stMethods = new Hashtable<String, Method>();
+	private Hashtable<String, ClassInfo> stClasses = new Hashtable<String, ClassInfo>();
+	private Hashtable<String, MethodInfo> stMethods = new Hashtable<String, MethodInfo>();
 
 
 	public String className;
 	public String[] classMethod;
 
 
-	public Hashtable<String, Class> getClasses(){
+	public Hashtable<String, ClassInfo> getClasses(){
 		return stClasses;
 	}
 
-	public Hashtable<String, Method> getMethods(){
+	public Hashtable<String, MethodInfo> getMethods(){
 		return stMethods;
 	}
 
@@ -29,7 +29,7 @@ public class SymbolTable {
 
 	public String getVarType(String idName, String varName) throws Exception{
 		///*flg*/System.out.println("getVarType("+ idName +","+ varName+")");
-		Method currMethod = stMethods.get(idName);
+		MethodInfo currMethod = stMethods.get(idName);
 		if (currMethod != null){
 			if (currMethod.parNames != null){
 				int totalPars = currMethod.parNames.length;
@@ -47,7 +47,7 @@ public class SymbolTable {
 				}
 			}
 
-			Class currClass = stClasses.get(currMethod.nameClass);
+			ClassInfo currClass = stClasses.get(currMethod.nameClass);
 			if (currClass.varNames != null){
 				int totalVars = currClass.varNames.length;
 				for (int currVar = 0; currVar < totalVars; currVar++){
@@ -66,7 +66,7 @@ public class SymbolTable {
 			throw new Exception("\t(a) Variable does not exist: " + idName + "." + varName);
 		}
 
-		Class currClass = stClasses.get(idName);
+		ClassInfo currClass = stClasses.get(idName);
 		if (currClass != null){
 			int totalVars = currClass.varNames.length;
 			for (int currVar = 0; currVar < totalVars; currVar++){
@@ -81,7 +81,7 @@ public class SymbolTable {
 	public String[] getParentClassesNames(String className){
 		///*flg*/System.out.println("getParentClassesNames("+ className+")");
 		String parentClassNamesList = "";
-		Class currClass = stClasses.get(className);
+		ClassInfo currClass = stClasses.get(className);
 		if(currClass != null){
 			while (currClass.nameExtends != null){
 				parentClassNamesList = currClass.nameExtends + "|" + parentClassNamesList;

@@ -2,8 +2,8 @@ package visitors;
 import syntaxtree.*;
 import visitor.GJDepthFirst;
 import java.util.Hashtable;
-import types.Class;
-import types.Method;
+import types.ClassInfo;
+import types.MethodInfo;
 import types.SymbolTable;
 
 public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
@@ -71,21 +71,21 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 
 		/* ---------CLASSES--------- */
 		/* Creating the information class for the current Class */
-		Class currClass = new Class();
+		ClassInfo currClass = new ClassInfo();
 		String[] mainMethod = new String[1];
 		mainMethod[0] = "main";
 		currClass.addClass(className, null, mainMethod, null, null);
-		/* Inserting this class in our Class' Hashtable */
-		Hashtable<String, Class> stClasses = st.getClasses();
+		/* Inserting this class in our class' Hashtable */
+		Hashtable<String, ClassInfo> stClasses = st.getClasses();
 		stClasses.put(className, currClass);
 
 
 		/* ---------METHODS--------- */
 		/* Creating the information class for the main method */
-		Method currMethod = new Method();
+		MethodInfo currMethod = new MethodInfo();
 		currMethod.addMethod(null, className + "." + mainMethod[0], className, methodIdTypes, methodIdNames, varTypes, varNames);
 		/* Inserting this class in our Methods' Hashtable */
-		Hashtable<String, Method> stMethods = st.getMethods();
+		Hashtable<String, MethodInfo> stMethods = st.getMethods();
 		stMethods.put(className + "." + mainMethod[0], currMethod);
 
 
@@ -105,7 +105,7 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 
 		String className = n.f1.accept(this, argu).toString();
 		/* Checking also if the class is already defined */
-		Hashtable<String, Class> stClasses = st.getClasses();
+		Hashtable<String, ClassInfo> stClasses = st.getClasses();
 		if (stClasses.get(className) != null){
 			throw new Exception("\tMultiple Definition: " + className);
 		}
@@ -145,10 +145,10 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 
 		/* ---------CLASSES--------- */
 		/* Creating the information class for the current Class */
-		Class currClass = new Class();
+		ClassInfo currClass = new ClassInfo();
 		currClass.addClass(className, null, methods, varTypes, varNames);
 		/* Inserting this class in our Class' Hashtable */
-		// Hashtable<String, Class> stClasses = st.getClasses();
+		// Hashtable<String, ClassInfo> stClasses = st.getClasses();
 		stClasses.put(className, currClass);
 
 
@@ -170,7 +170,7 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 
 		String className = n.f1.accept(this, argu).toString();
 		/* Checking also if the class is already defined */
-		Hashtable<String, Class> stClasses = st.getClasses();
+		Hashtable<String, ClassInfo> stClasses = st.getClasses();
 		if (stClasses.get(className) != null){
 			throw new Exception("\tMultiple Definition: " + className);
 		}
@@ -178,7 +178,7 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 
 		String classExtendsName = n.f3.accept(this, argu).toString();
 		/* Checking also if the extend class has been defined */
-		// Hashtable<String, Class> stClasses = st.getClasses();
+		// Hashtable<String, ClassInfo> stClasses = st.getClasses();
 		if (stClasses.get(classExtendsName) == null){
 			throw new Exception("\tMissing Declaration: " + classExtendsName);
 		}
@@ -218,10 +218,10 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 
 		/* ---------CLASSES--------- */
 		/* Creating the information class for the current Class */
-		Class currClass = new Class();
+		ClassInfo currClass = new ClassInfo();
 		currClass.addClass(className, classExtendsName, methods, varTypes, varNames);
 		/* Inserting this class in our Class' Hashtable */
-		// Hashtable<String, Class> stClasses = st.getClasses();
+		// Hashtable<String, ClassInfo> stClasses = st.getClasses();
 		stClasses.put(className, currClass);
 
 
@@ -269,7 +269,7 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 		String methodName = n.f2.accept(this, className).toString();
 		String fullMethodName = className + "." + methodName;
 		/* Checking also if the method is already defined */
-		Hashtable<String, Method> stMethods = st.getMethods();
+		Hashtable<String, MethodInfo> stMethods = st.getMethods();
 		if (stMethods.get(fullMethodName) != null){
 			throw new Exception("\tMultiple Definition: " + fullMethodName);
 		}
@@ -327,10 +327,10 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 			}
 		}
 		if (classExtendsName != null){
-			Method extenderClassMethod = stMethods.get(classExtendsName + "." + methodName);
+			MethodInfo extenderClassMethod = stMethods.get(classExtendsName + "." + methodName);
 			if (extenderClassMethod != null){
 				if (extenderClassMethod.type != methodType){
-					throw new Exception("\tDifferent Method Type from superclass: " + fullMethodName);
+					throw new Exception("\tDifferent MethodInfo Type from superclass: " + fullMethodName);
 				}
 				if(extenderClassMethod.parNames == null){
 					if (totalPars != 0){
@@ -358,10 +358,10 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 
 		/* ---------METHODS--------- */
 		/* Creating the information class for the main method */
-		Method currMethod = new Method();
+		MethodInfo currMethod = new MethodInfo();
 		currMethod.addMethod(methodType, fullMethodName, className, parTypes, parNames, varTypes, varNames);
 		/* Inserting this class in our Methods' Hashtable */
-		//Hashtable<String, Method> stMethods = st.getMethods();
+		//Hashtable<String, MethodInfo> stMethods = st.getMethods();
 		stMethods.put(fullMethodName, currMethod);
 
 
