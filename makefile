@@ -69,7 +69,8 @@ compile:
 	javac Main.java
 
 clean:
-	rm -f *.class *~
+	find . -type f -iname \*.class -delete
+	rm -f *~
 	clear
 
 commit:	clean delete
