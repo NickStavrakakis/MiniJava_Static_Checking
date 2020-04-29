@@ -7,6 +7,7 @@ public class Class {
 	public String[] varNames;
 
 	public void addClass(String cName, String cExtendsName, String[] cMethod, String[] cvarTypes, String[] cvarNames){
+
 		name = cName;
 		nameExtends = cExtendsName;
 		if (cMethod != null)
@@ -15,6 +16,7 @@ public class Class {
 			varTypes = cvarTypes.clone();
 		if (cvarNames != null)
 			varNames = cvarNames.clone();
+			
 	}
 
 }

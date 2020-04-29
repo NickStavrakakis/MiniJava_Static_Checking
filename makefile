@@ -64,8 +64,8 @@ compile:
 	javac Class.java
 	javac Method.java
 	javac SymbolTable.java
-	javac LocateVisitor.java
-	javac Visitor2.java
+	javac DefCollectVisitor.java
+	javac TypeCheckVisitor.java
 	javac Main.java
 
 clean:

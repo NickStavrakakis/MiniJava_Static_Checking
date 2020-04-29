@@ -8,9 +8,9 @@ public class SymbolTable {
 	private Hashtable<String, Class> stClasses = new Hashtable<String, Class>();
 	private Hashtable<String, Method> stMethods = new Hashtable<String, Method>();
 
+
 	public String className;
 	public String[] classMethod;
-
 
 
 	public Hashtable<String, Class> getClasses(){
@@ -23,7 +23,6 @@ public class SymbolTable {
 
 	public void print(){
 		System.out.println(stClasses);
-
 	}
 
 	public String getVarType(String idName, String varName) throws Exception{
@@ -45,8 +44,8 @@ public class SymbolTable {
 					}
 				}
 			}
-			Class currClass = stClasses.get(currMethod.nameClass);
 
+			Class currClass = stClasses.get(currMethod.nameClass);
 			if (currClass.varNames != null){
 				int totalVars = currClass.varNames.length;
 				for (int currVar = 0; currVar < totalVars; currVar++){
@@ -54,7 +53,6 @@ public class SymbolTable {
 						return currClass.varTypes[currVar];
 				}
 			}
-
 			if (idName.contains(".")){
 				String[] parts = idName.split("\\.");
 				String[] parentClassNames = getParentClassesNames(parts[0]);
@@ -66,7 +64,6 @@ public class SymbolTable {
 			throw new Exception("\t(a) Variable does not exist: " + idName + "." + varName);
 		}
 
-
 		Class currClass = stClasses.get(idName);
 		if (currClass != null){
 			int totalVars = currClass.varNames.length;
@@ -74,16 +71,13 @@ public class SymbolTable {
 				if (currClass.varNames[currVar].equals(varName))
 					return currClass.varTypes[currVar];
 			}
-
 			throw new Exception("\t(b) Variable does not exist: " + idName + "." + varName);
 		}
-
 		throw new Exception("\t(c) Variable does not exist: " + idName + "." + varName);
 	}
 
 	public String[] getParentClassesNames(String className){
 		///*flg*/System.out.println("getParentClassesNames("+ className+")");
-
 		String parentClassNamesList = "";
 		Class currClass = stClasses.get(className);
 		if(currClass != null){
@@ -96,7 +90,6 @@ public class SymbolTable {
 		}
 		///*flg*/System.out.println("will return " + parentClassNamesList);
 		return parentClassNamesList.split("\\|");
-
 	}
 
 }

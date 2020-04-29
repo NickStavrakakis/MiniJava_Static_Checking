@@ -9,6 +9,7 @@ public class Method {
 	public String[] varNames;
 
 	public void addMethod(String mType, String mName, String cName, String[] mIdTypes, String[] mIdNames, String[] mVarTypes, String[] mVarNames){
+
 		type = mType;
 		name = mName;
 		nameClass = cName;
