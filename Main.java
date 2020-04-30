@@ -1,12 +1,11 @@
 import syntaxtree.*;
 import visitor.*;
+import java.util.*;
 import java.io.*;
 import visitors.*;
 import types.ClassInfo;
 import types.MethodInfo;
 import types.SymbolTable;
-import java.util.Hashtable;
-import java.util.Set;
 
 class Main {
 	public static void main (String [] args){
@@ -29,7 +28,7 @@ class Main {
 
 				fis_A = new FileInputStream(currFileName);
 				MiniJavaParser parser_A = new MiniJavaParser(fis_A);
-				System.err.println("\n" + currFileName + " parsed successfully.");
+				System.out.println("\n" + currFileName + " parsed successfully.");
 
 				DefCollectVisitor visitor_A = new DefCollectVisitor();
 				Goal root_A = parser_A.Goal();
@@ -54,104 +53,121 @@ class Main {
 				Hashtable<String, ClassInfo> stClasses = st.getClasses();
 				Hashtable<String, MethodInfo> stMethods = st.getMethods();
 
-				Set<String> keys = stClasses.keySet();
-				boolean skipped_main = false;
-		        for (String key: keys){
+				List<String> alreadyVisited = new ArrayList<>();
 
-					ClassInfo currClass = stClasses.get(key);
-					if (skipped_main != true) {
-						if (currFileName.endsWith("/" + currClass.name + ".java")){
-							skipped_main = true;
-							continue;
-						}
+				// Calculating the offsets until every class has been visited = Symbol Table of classes is Empty
+				int i = 0;
+				while (!stClasses.isEmpty()){
+					// Removing from the Symbol Table the already printed/visited classes
+					for (String className: alreadyVisited) {
+						stClasses.remove(className);
 					}
-		           	System.out.println("-----------Class " + currClass.name + " -----------");
 
+					// We copy our hash table to a set so we can visit every element
+					Set<String> keys = stClasses.keySet();
+					boolean skipped_main = false;
+			        for (String key: keys){
 
-					/* ---------VARIABLES--------- */
-					System.out.println("--Variables---");
+						ClassInfo currClass = stClasses.get(key);
 
-
-					/* if it's missing, add current class to the offset Hashtable */
-					if (varOffsets.get(currClass.name) == null)
-						varOffsets.put(currClass.name, 0);
-
-
-					/* if has a super class, take its offset count */
-					int varOffsetCounter;
-					if (currClass.nameExtends != null)
-						varOffsetCounter = varOffsets.get(currClass.nameExtends);
-					else
-						varOffsetCounter = varOffsets.get(currClass.name);
-
-
-					if (currClass.varNames != null){
-						int totalVars = currClass.varNames.length;
-						for (int currVarPos = 0; currVarPos < totalVars; currVarPos++){
-			            	System.out.println(currClass.name + "." + currClass.varNames[currVarPos] + " : " + varOffsetCounter);
-							switch(currClass.varTypes[currVarPos]) {
-								case "int":
-									varOffsetCounter = varOffsetCounter + 4;
-									break;
-								case "boolean":
-									varOffsetCounter = varOffsetCounter + 1;
-									break;
-								default:
-									varOffsetCounter = varOffsetCounter + 8;
+						// We don't print/calculate the main's class offsets, so we added to the two offset tables and then we skip it
+						if (skipped_main != true) {
+							if (currFileName.endsWith("/" + currClass.name + ".java")){
+								skipped_main = true;
+								varOffsets.put(currClass.name, 0);
+								methOffsets.put(currClass.name, 0);
+								alreadyVisited.add(currClass.name);
+								continue;
 							}
 						}
-						varOffsets.replace(currClass.name, varOffsetCounter);
-					}
-					/* if has a super class, update its offset count */
-					if (currClass.nameExtends != null)
-						varOffsets.replace(currClass.nameExtends, varOffsetCounter);
-					varOffsets.replace(currClass.name, varOffsetCounter);
+
+						/* if has a super class, take its offset count */
+						int varOffsetCounter;
+						if (currClass.nameExtends != null){
+							// if its superclass is not on the offset table, that means that we have not calculated and printed the offsets of that class
+							// so we skip this class until the above happens
+							if (varOffsets.get(currClass.nameExtends) != null){
+								varOffsetCounter = varOffsets.get(currClass.nameExtends);
+							}
+							else
+								continue;
+						}
+						else
+							varOffsetCounter = 0;
+
+						System.out.println("-----------Class " + currClass.name + " -----------");
 
 
-					/* ----------METHODS---------- */
-					System.out.println("---Methods---");
+						/* ---------VARIABLES--------- */
+						System.out.println("--Variables---");
 
-
-					/* if it's missing, add current class to the offset Hashtable */
-					if (methOffsets.get(currClass.name) == null)
-						methOffsets.put(currClass.name, 0);
-
-
-					/* if has a super class, take its offset count */
-					int methOffsetCounter;
-					if (currClass.nameExtends != null)
-						methOffsetCounter = methOffsets.get(currClass.nameExtends);
-					else
-						methOffsetCounter = methOffsets.get(currClass.name);
-
-
-					if (currClass.methods != null){
-						for (String method: currClass.methods){
-							String[] parts = method.split("\\.");
-							String[] parentClassNames = st.getParentClassesNames(parts[0]);
-							boolean inheritanceExist = false;
-							//change currClass.nameExtends
-							for (int currParentClasseNamePos = 0; currParentClasseNamePos < parentClassNames.length; currParentClasseNamePos++){
-								if (stMethods.get(parentClassNames[currParentClasseNamePos] + "." + parts[1]) != null){
-									inheritanceExist = true;
-									break;
+						if (currClass.varNames != null){
+							int totalVars = currClass.varNames.length;
+							for (int currVarPos = 0; currVarPos < totalVars; currVarPos++){
+				            	System.out.println(currClass.name + "." + currClass.varNames[currVarPos] + " : " + varOffsetCounter);
+								switch(currClass.varTypes[currVarPos]) {
+									case "int":
+										varOffsetCounter = varOffsetCounter + 4;
+										break;
+									case "boolean":
+										varOffsetCounter = varOffsetCounter + 1;
+										break;
+									default:
+										varOffsetCounter = varOffsetCounter + 8;
 								}
 							}
-							if (inheritanceExist != true){
-			            		System.out.println(method + " : " + methOffsetCounter);
-								methOffsetCounter = methOffsetCounter + 8;
+							varOffsets.put(currClass.name, varOffsetCounter);
+						}
+
+
+						/* ----------METHODS---------- */
+						System.out.println("---Methods---");
+
+						/* if it's missing, add current class to the offset Hashtable */
+						if (methOffsets.get(currClass.name) == null)
+							methOffsets.put(currClass.name, 0);
+
+
+
+
+						/* if has a super class, take its offset count */
+						int methOffsetCounter;
+						if (currClass.nameExtends != null){
+							if (methOffsets.get(currClass.nameExtends) != null)
+								methOffsetCounter = methOffsets.get(currClass.nameExtends);
+							else{
+								System.out.println('2');
+								continue;
 							}
 						}
+						else
+							methOffsetCounter = 0;
+
+
+						if (currClass.methods != null){
+							for (String method: currClass.methods){
+								String[] parts = method.split("\\.");
+								String[] parentClassNames = st.getParentClassesNames(parts[0]);
+								boolean inheritanceExist = false;
+								for (int currParentClasseNamePos = 0; currParentClasseNamePos < parentClassNames.length; currParentClasseNamePos++){
+									if (stMethods.get(parentClassNames[currParentClasseNamePos] + "." + parts[1]) != null){
+										inheritanceExist = true;
+										break;
+									}
+								}
+								if (inheritanceExist != true){
+				            		System.out.println(method + " : " + methOffsetCounter);
+									methOffsetCounter = methOffsetCounter + 8;
+								}
+							}
+							methOffsets.put(currClass.name, methOffsetCounter);
+						}
+
+						// add the current class to the visited list, to remove it before the next bih loop
+						alreadyVisited.add(currClass.name);
+						System.out.println();
 					}
-					/* if has a super class, update its offset count */
-					if (currClass.nameExtends != null)
-						methOffsets.replace(currClass.nameExtends, methOffsetCounter);
-					methOffsets.replace(currClass.name, methOffsetCounter);
-
-
-					System.out.println();
-		        }
-
+				}
 			}
 			catch(ParseException ex){
 				System.out.println(ex.getMessage());
@@ -161,6 +177,8 @@ class Main {
 			}
 			catch(Exception ex){
 				System.err.println("\u001B[31m" + ex.getMessage() + "\u001B[0m");
+				ex.printStackTrace();
+
 			}
 			finally{
 				try{

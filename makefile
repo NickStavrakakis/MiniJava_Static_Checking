@@ -57,6 +57,12 @@ run_minijava-error-extra:
 run_offset-examples:
 	java Main ../TestFiles/offsets/offset-examples/BinaryTree.java \
 	../TestFiles/offsets/offset-examples/BubbleSort.java \
+	../TestFiles/offsets/offset-examples/Factorial.java \
+	../TestFiles/offsets/offset-examples/LinearSearch.java \
+	../TestFiles/offsets/offset-examples/LinkedList.java \
+	../TestFiles/offsets/offset-examples/MoreThan4.java \
+	../TestFiles/offsets/offset-examples/QuickSort.java \
+	../TestFiles/offsets/offset-examples/TreeVisitor.java \
 	../TestFiles/offsets/offset-examples/Extra/Add.java \
 	../TestFiles/offsets/offset-examples/Extra/ArrayTest.java \
 	../TestFiles/offsets/offset-examples/Extra/CallFromSuper.java \
@@ -80,13 +86,8 @@ run_offset-examples:
 	../TestFiles/offsets/offset-examples/Extra/test82.java \
 	../TestFiles/offsets/offset-examples/Extra/test93.java \
 	../TestFiles/offsets/offset-examples/Extra/test99.java \
-	../TestFiles/offsets/offset-examples/Factorial.java \
-	../TestFiles/offsets/offset-examples/LinearSearch.java \
-	../TestFiles/offsets/offset-examples/LinkedList.java \
-	../TestFiles/offsets/offset-examples/MoreThan4.java \
-	../TestFiles/offsets/offset-examples/QuickSort.java \
-	../TestFiles/offsets/offset-examples/SiteExample/SiteExample.java \
-	../TestFiles/offsets/offset-examples/TreeVisitor.java
+	../TestFiles/offsets/offset-examples/OtherExamples/PiazzaExample.java \
+	../TestFiles/offsets/offset-examples/OtherExamples/SiteExample.java
 
 build: jars compile
 
