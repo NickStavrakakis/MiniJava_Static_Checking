@@ -1,0 +1,27 @@
+-----------Class A -----------
+--Variables---
+A.a : 0
+A.b : 4
+---Methods---
+A.foo : 0
+
+-----------Class B -----------
+--Variables---
+B.c : 8
+B.d : 12
+---Methods---
+B.bar : 8
+
+-----------Class C -----------
+--Variables---
+C.e : 13
+C.f : 17
+---Methods---
+C.search : 16
+
+-----------Class D -----------
+--Variables---
+D.g : 8
+D.h : 9
+---Methods---
+D.delete : 8

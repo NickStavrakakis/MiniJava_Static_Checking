@@ -42,7 +42,7 @@ class Main {
 				Goal root_B = parser_B.Goal();
 				root_B.accept(visitor_B, null);
 				System.out.println("\tVisitor B ended successfully");
-
+				System.out.println();
 
 				/* ---------PRINTING OFFSETS--------- */
 
@@ -58,6 +58,9 @@ class Main {
 				// Calculating the offsets until every class has been visited = Symbol Table of classes is Empty
 				int i = 0;
 				while (!stClasses.isEmpty()){
+					i++;
+					//System.out.println("BIG LOOP " + stClasses);
+
 					// Removing from the Symbol Table the already printed/visited classes
 					for (String className: alreadyVisited) {
 						stClasses.remove(className);
@@ -67,6 +70,7 @@ class Main {
 					Set<String> keys = stClasses.keySet();
 					boolean skipped_main = false;
 			        for (String key: keys){
+						//System.out.println("SMALL LOOP");
 
 						ClassInfo currClass = stClasses.get(key);
 
@@ -75,6 +79,7 @@ class Main {
 							if (currFileName.endsWith("/" + currClass.name + ".java")){
 								skipped_main = true;
 								varOffsets.put(currClass.name, 0);
+								//System.out.println("Added " + currClass.name + " to varOffsets (0)");
 								methOffsets.put(currClass.name, 0);
 								alreadyVisited.add(currClass.name);
 								continue;
@@ -83,7 +88,13 @@ class Main {
 
 						/* if has a super class, take its offset count */
 						int varOffsetCounter;
+
 						if (currClass.nameExtends != null){
+						//System.out.println("currClass.name: " + currClass.name + ", currClass.nameExtends: " + currClass.nameExtends);
+
+
+
+
 							// if its superclass is not on the offset table, that means that we have not calculated and printed the offsets of that class
 							// so we skip this class until the above happens
 							if (varOffsets.get(currClass.nameExtends) != null){
@@ -94,6 +105,7 @@ class Main {
 						}
 						else
 							varOffsetCounter = 0;
+
 
 						System.out.println("-----------Class " + currClass.name + " -----------");
 
@@ -116,8 +128,10 @@ class Main {
 										varOffsetCounter = varOffsetCounter + 8;
 								}
 							}
-							varOffsets.put(currClass.name, varOffsetCounter);
+
+							//System.out.println("Added " + currClass.name + " to varOffsets (" + varOffsetCounter + ")");
 						}
+						varOffsets.put(currClass.name, varOffsetCounter);
 
 
 						/* ----------METHODS---------- */
@@ -135,10 +149,8 @@ class Main {
 						if (currClass.nameExtends != null){
 							if (methOffsets.get(currClass.nameExtends) != null)
 								methOffsetCounter = methOffsets.get(currClass.nameExtends);
-							else{
-								System.out.println('2');
+							else // will not happen, but we keep it for safety
 								continue;
-							}
 						}
 						else
 							methOffsetCounter = 0;
@@ -160,8 +172,8 @@ class Main {
 									methOffsetCounter = methOffsetCounter + 8;
 								}
 							}
-							methOffsets.put(currClass.name, methOffsetCounter);
 						}
+						methOffsets.put(currClass.name, methOffsetCounter);
 
 						// add the current class to the visited list, to remove it before the next bih loop
 						alreadyVisited.add(currClass.name);
