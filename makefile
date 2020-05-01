@@ -3,91 +3,91 @@
 all: compile
 
 run_all:
-	java Main ../TestFiles/BinaryTree.java \
-	../TestFiles/BubbleSort.java ../TestFiles/BubbleSort-error.java \
-	../TestFiles/Factorial.java ../TestFiles/Factorial-error.java \
-	../TestFiles/LinearSearch.java ../TestFiles/LinearSearch-error.java  \
-	../TestFiles/LinkedList.java ../TestFiles/LinkedList-error.java \
-	../TestFiles/MoreThan4.java ../TestFiles/MoreThan4-error.java \
-	../TestFiles/QuickSort.java ../TestFiles/QuickSort-error.java \
-	../TestFiles/TreeVisitor.java ../TestFiles/TreeVisitor-error.java
+	java Main test_files/BinaryTree.java \
+	test_files/BubbleSort.java test_files/BubbleSort-error.java \
+	test_files/Factorial.java test_files/Factorial-error.java \
+	test_files/LinearSearch.java test_files/LinearSearch-error.java  \
+	test_files/LinkedList.java test_files/LinkedList-error.java \
+	test_files/MoreThan4.java test_files/MoreThan4-error.java \
+	test_files/QuickSort.java test_files/QuickSort-error.java \
+	test_files/TreeVisitor.java test_files/TreeVisitor-error.java
 
 run_minijava-extra:
-	java Main ../TestFiles/minijava-extra/Add.java \
-	 ../TestFiles/minijava-extra/ArrayTest.java \
-	 ../TestFiles/minijava-extra/CallFromSuper.java \
-	 ../TestFiles/minijava-extra/Classes.java \
-	 ../TestFiles/minijava-extra/DerivedCall.java \
-	 ../TestFiles/minijava-extra/Example1.java \
-	 ../TestFiles/minijava-extra/FieldAndClassConflict.java \
-	 ../TestFiles/minijava-extra/Main.java \
-	 ../TestFiles/minijava-extra/ManyClasses.java \
-	 ../TestFiles/minijava-extra/OutOfBounds1.java \
-	 ../TestFiles/minijava-extra/Overload2.java \
-	 ../TestFiles/minijava-extra/ShadowBaseField.java \
-	 ../TestFiles/minijava-extra/ShadowField.java \
-	 ../TestFiles/minijava-extra/test06.java \
-	 ../TestFiles/minijava-extra/test07.java \
-	 ../TestFiles/minijava-extra/test15.java \
-	 ../TestFiles/minijava-extra/test17.java \
-	 ../TestFiles/minijava-extra/test20.java \
-	 ../TestFiles/minijava-extra/test62.java \
-	 ../TestFiles/minijava-extra/test73.java \
-	 ../TestFiles/minijava-extra/test82.java \
-	 ../TestFiles/minijava-extra/test93.java \
-	 ../TestFiles/minijava-extra/test99.java
+	java Main test_files/minijava-extra/Add.java \
+	 test_files/minijava-extra/ArrayTest.java \
+	 test_files/minijava-extra/CallFromSuper.java \
+	 test_files/minijava-extra/Classes.java \
+	 test_files/minijava-extra/DerivedCall.java \
+	 test_files/minijava-extra/Example1.java \
+	 test_files/minijava-extra/FieldAndClassConflict.java \
+	 test_files/minijava-extra/Main.java \
+	 test_files/minijava-extra/ManyClasses.java \
+	 test_files/minijava-extra/OutOfBounds1.java \
+	 test_files/minijava-extra/Overload2.java \
+	 test_files/minijava-extra/ShadowBaseField.java \
+	 test_files/minijava-extra/ShadowField.java \
+	 test_files/minijava-extra/test06.java \
+	 test_files/minijava-extra/test07.java \
+	 test_files/minijava-extra/test15.java \
+	 test_files/minijava-extra/test17.java \
+	 test_files/minijava-extra/test20.java \
+	 test_files/minijava-extra/test62.java \
+	 test_files/minijava-extra/test73.java \
+	 test_files/minijava-extra/test82.java \
+	 test_files/minijava-extra/test93.java \
+	 test_files/minijava-extra/test99.java
 
 run_minijava-error-extra:
-	java Main ../TestFiles/minijava-error-extra/BadAssign2.java \
-	../TestFiles/minijava-error-extra/BadAssign.java \
-	../TestFiles/minijava-error-extra/Classes-error.java \
-	../TestFiles/minijava-error-extra/DoubleDeclaration1.java \
-	../TestFiles/minijava-error-extra/DoubleDeclaration4.java \
-	../TestFiles/minijava-error-extra/DoubleDeclaration6.java \
-	../TestFiles/minijava-error-extra/NoMatchingMethod.java \
-	../TestFiles/minijava-error-extra/NoMethod.java \
-	../TestFiles/minijava-error-extra/Overload1.java \
-	../TestFiles/minijava-error-extra/test18.java \
-	../TestFiles/minijava-error-extra/test21.java \
-	../TestFiles/minijava-error-extra/test35.java \
-	../TestFiles/minijava-error-extra/test52.java \
-	../TestFiles/minijava-error-extra/test68.java \
-	../TestFiles/minijava-error-extra/UseArgs.java
+	java Main test_files/minijava-error-extra/BadAssign2.java \
+	test_files/minijava-error-extra/BadAssign.java \
+	test_files/minijava-error-extra/Classes-error.java \
+	test_files/minijava-error-extra/DoubleDeclaration1.java \
+	test_files/minijava-error-extra/DoubleDeclaration4.java \
+	test_files/minijava-error-extra/DoubleDeclaration6.java \
+	test_files/minijava-error-extra/NoMatchingMethod.java \
+	test_files/minijava-error-extra/NoMethod.java \
+	test_files/minijava-error-extra/Overload1.java \
+	test_files/minijava-error-extra/test18.java \
+	test_files/minijava-error-extra/test21.java \
+	test_files/minijava-error-extra/test35.java \
+	test_files/minijava-error-extra/test52.java \
+	test_files/minijava-error-extra/test68.java \
+	test_files/minijava-error-extra/UseArgs.java
 
 run_offset-examples:
-	java Main ../TestFiles/offsets/offset-examples/BinaryTree.java \
-	../TestFiles/offsets/offset-examples/BubbleSort.java \
-	../TestFiles/offsets/offset-examples/Factorial.java \
-	../TestFiles/offsets/offset-examples/LinearSearch.java \
-	../TestFiles/offsets/offset-examples/LinkedList.java \
-	../TestFiles/offsets/offset-examples/MoreThan4.java \
-	../TestFiles/offsets/offset-examples/QuickSort.java \
-	../TestFiles/offsets/offset-examples/TreeVisitor.java \
-	../TestFiles/offsets/offset-examples/Extra/Add.java \
-	../TestFiles/offsets/offset-examples/Extra/ArrayTest.java \
-	../TestFiles/offsets/offset-examples/Extra/CallFromSuper.java \
-	../TestFiles/offsets/offset-examples/Extra/Classes.java \
-	../TestFiles/offsets/offset-examples/Extra/DerivedCall.java \
-	../TestFiles/offsets/offset-examples/Extra/Example1.java \
-	../TestFiles/offsets/offset-examples/Extra/FieldAndClassConflict.java \
-	../TestFiles/offsets/offset-examples/Extra/Main.java \
-	../TestFiles/offsets/offset-examples/Extra/ManyClasses.java \
-	../TestFiles/offsets/offset-examples/Extra/OutOfBounds1.java \
-	../TestFiles/offsets/offset-examples/Extra/Overload2.java \
-	../TestFiles/offsets/offset-examples/Extra/ShadowBaseField.java \
-	../TestFiles/offsets/offset-examples/Extra/ShadowField.java \
-	../TestFiles/offsets/offset-examples/Extra/test06.java \
-	../TestFiles/offsets/offset-examples/Extra/test07.java \
-	../TestFiles/offsets/offset-examples/Extra/test15.java \
-	../TestFiles/offsets/offset-examples/Extra/test17.java \
-	../TestFiles/offsets/offset-examples/Extra/test20.java \
-	../TestFiles/offsets/offset-examples/Extra/test62.java \
-	../TestFiles/offsets/offset-examples/Extra/test73.java \
-	../TestFiles/offsets/offset-examples/Extra/test82.java \
-	../TestFiles/offsets/offset-examples/Extra/test93.java \
-	../TestFiles/offsets/offset-examples/Extra/test99.java \
-	../TestFiles/offsets/offset-examples/OtherExamples/PiazzaExample.java \
-	../TestFiles/offsets/offset-examples/OtherExamples/SiteExample.java
+	java Main test_files/offsets/offset-examples/BinaryTree.java \
+	test_files/offsets/offset-examples/BubbleSort.java \
+	test_files/offsets/offset-examples/Factorial.java \
+	test_files/offsets/offset-examples/LinearSearch.java \
+	test_files/offsets/offset-examples/LinkedList.java \
+	test_files/offsets/offset-examples/MoreThan4.java \
+	test_files/offsets/offset-examples/QuickSort.java \
+	test_files/offsets/offset-examples/TreeVisitor.java \
+	test_files/offsets/offset-examples/Extra/Add.java \
+	test_files/offsets/offset-examples/Extra/ArrayTest.java \
+	test_files/offsets/offset-examples/Extra/CallFromSuper.java \
+	test_files/offsets/offset-examples/Extra/Classes.java \
+	test_files/offsets/offset-examples/Extra/DerivedCall.java \
+	test_files/offsets/offset-examples/Extra/Example1.java \
+	test_files/offsets/offset-examples/Extra/FieldAndClassConflict.java \
+	test_files/offsets/offset-examples/Extra/Main.java \
+	test_files/offsets/offset-examples/Extra/ManyClasses.java \
+	test_files/offsets/offset-examples/Extra/OutOfBounds1.java \
+	test_files/offsets/offset-examples/Extra/Overload2.java \
+	test_files/offsets/offset-examples/Extra/ShadowBaseField.java \
+	test_files/offsets/offset-examples/Extra/ShadowField.java \
+	test_files/offsets/offset-examples/Extra/test06.java \
+	test_files/offsets/offset-examples/Extra/test07.java \
+	test_files/offsets/offset-examples/Extra/test15.java \
+	test_files/offsets/offset-examples/Extra/test17.java \
+	test_files/offsets/offset-examples/Extra/test20.java \
+	test_files/offsets/offset-examples/Extra/test62.java \
+	test_files/offsets/offset-examples/Extra/test73.java \
+	test_files/offsets/offset-examples/Extra/test82.java \
+	test_files/offsets/offset-examples/Extra/test93.java \
+	test_files/offsets/offset-examples/Extra/test99.java \
+	test_files/offsets/offset-examples/OtherExamples/PiazzaExample.java \
+	test_files/offsets/offset-examples/OtherExamples/SiteExample.java
 
 build: jars compile
 

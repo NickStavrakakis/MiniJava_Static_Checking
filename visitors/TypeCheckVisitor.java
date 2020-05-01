@@ -13,9 +13,11 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	String currClassName;
 	String currMethodName;
 
-	public TypeCheckVisitor(SymbolTable visitor_A_st) {
+
+	public TypeCheckVisitor(SymbolTable visitor_A_st){
 		st = visitor_A_st;
 	}
+
 
 	/**
 	* f0 -> "class"
@@ -45,9 +47,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		String fullMethodName = className + ".main";
 		currMethodName = fullMethodName;
 
-
 		n.f11.accept(this, null);
-
 
 		if (n.f14.present()){
 			int totalVars = n.f14.size();
@@ -56,7 +56,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 			}
 		}
 
-
 		if (n.f15.present()){
 			int totalStatements = n.f15.size();
 			for (int currStatementPos = 0; currStatementPos < totalStatements; currStatementPos++){
@@ -64,9 +63,9 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 			}
 		}
 
-
 		return null;
 	}
+
 
 	/**
 	* f0 -> "class"
@@ -82,14 +81,12 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		String className = n.f1.accept(this, null).toString();
 		currClassName = className;
 
-
 		if (n.f3.present()){
 			int totalVars = n.f3.size();
 			for (int currVarPos = 0; currVarPos < totalVars; currVarPos++){
 				n.f3.elementAt(currVarPos).accept(this, className);
 			}
 		}
-
 
 		if (n.f4.present()){
 			int totalMethods = n.f4.size();
@@ -98,9 +95,9 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 			}
 		}
 
-
 		return null;
 	}
+
 
 	/**
 	* f0 -> "class"
@@ -118,9 +115,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		String className = n.f1.accept(this, null).toString();
 		currClassName = className;
 
-
 		String classExtendsName = n.f3.accept(this, null).toString();
-
 
 		if (n.f5.present()){
 			int totalVars = n.f5.size();
@@ -129,7 +124,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 			}
 		}
 
-
 		if (n.f6.present()){
 			int totalMethods = n.f6.size();
 			for (int currMethodPos = 0; currMethodPos < totalMethods; currMethodPos++){
@@ -137,9 +131,9 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 			}
 		}
 
-
 		return null;
 	}
+
 
 	/**
 	* f0 -> Type()
@@ -150,6 +144,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		n.f2.accept(this, null);
 		return null;
 	}
+
 
 	/**
 	* f0 -> "public"
@@ -176,17 +171,13 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		if (parts.length == 2)
 			classExtendsName = parts[1];
 
-
 		String methodType = n.f1.accept(this, null).toString();
-
 
 		String methodName = n.f2.accept(this, null).toString();
 		String fullMethodName = className + "." + methodName;
 		currMethodName = fullMethodName;
 
-
 		n.f4.accept(this, null);
-
 
 		if (n.f7.present()){
 			int totalVars = n.f7.size();
@@ -195,7 +186,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 			}
 		}
 
-
 		if (n.f8.present()){
 			int totalStatements = n.f8.size();
 			for (int currStatementPos = 0; currStatementPos < totalStatements; currStatementPos++){
@@ -203,21 +193,18 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 			}
 		}
 
-
 		String retType = n.f10.accept(this, fullMethodName).toString();
 		parts = retType.split("\\|");
 		if (parts.length == 2)
 			retType = parts[1];
-		else if (retType.equals("this")){
+		else if (retType.equals("this"))
 			retType = currClassName;
-		}
-		if (!retType.equals(methodType)){
+		if (!retType.equals(methodType))
 			throw new Exception("\tExpected " + methodType + " type @MethodDeclaration");
-		}
-
 
 		return fullMethodName;
 	}
+
 
 	/**
 	* f0 -> FormalParameter()
@@ -228,12 +215,13 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		Object currPar = n.f0.accept(this, argu);
 		Object currParTail = n.f1.accept(this, argu);
 		if (currPar != null){
-			if(currParTail!=null)
+			if (currParTail!=null)
 				return currPar.toString() + currParTail.toString();
 			return currPar.toString();
     	}
     	return null;
     }
+
 
 	/**
 	* f0 -> Type()
@@ -242,6 +230,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
     public Object visit(FormalParameter n, Object argu) throws Exception{
 		return n.f0.accept(this, argu).toString() + " " + n.f1.accept(this, null).toString();
     }
+
 
 	/**
 	* f0 -> ( FormalParameterTerm() )*
@@ -252,11 +241,11 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		String currParTail = "";
 		for (int currParPos = 0; currParPos < totalPars; currParPos++)
 			currParTail = currParTail + "," + n.f0.elementAt(currParPos).accept(this, argu).toString();
-		if(currParTail != null)
+		if (currParTail != null)
 			return currParTail;
-
 		return null;
 	}
+
 
 	/**
 	* f0 -> ","
@@ -265,6 +254,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	public Object visit(FormalParameterTerm n, Object argu) throws Exception{
 		return n.f1.accept(this, argu);
 	}
+
 
 	/**
 	* f0 -> BooleanArrayType()
@@ -275,15 +265,17 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		return n.f0.accept(this, argu).toString();
 	}
 
-/**
-* f0 -> "boolean"
-* f1 -> "["
-* f2 -> "]"
-*/
+
+	/**
+	* f0 -> "boolean"
+	* f1 -> "["
+	* f2 -> "]"
+	*/
 	public Object visit(BooleanArrayType n, Object argu) throws Exception{
 		///*flg*/System.out.println("BooleanArrayType");
 		return n.f0.toString() + n.f1.toString() + n.f2.toString();
 	}
+
 
 	/**
 	* f0 -> "int"
@@ -295,6 +287,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		return n.f0.toString() + n.f1.toString() + n.f2.toString();
 	}
 
+
 	/**
 	* f0 -> "boolean"
 	*/
@@ -303,6 +296,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		return n.f0.toString();
 	}
 
+
 	/**
 	* f0 -> "int"
 	*/
@@ -310,6 +304,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		///*flg*/System.out.println("IntegerType");
 		return n.f0.toString();
 	}
+
 
 	/**
 	* f0 -> "{"
@@ -325,9 +320,9 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 				n.f1.elementAt(currStatementPos).accept(this, argu);
 			}
 		}
-
 		return null;
 	}
+
 
 	/**
 	* f0 -> Identifier()
@@ -338,7 +333,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	public Object visit(AssignmentStatement n, Object argu) throws Exception{
 		///*flg*/System.out.println("AssignmentStatement");
 
-		// Remove this, it should never be null
 		if (n.f2.accept(this, argu)== null)
 			return null;
 
@@ -357,7 +351,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exTypeRight.equals("this")){
 			exTypeRight = currClassName;
 		}
-
 
 		if (!exTypeLeft.equals(exTypeRight)){
 			String[] parentClassNames = st.getParentClassesNames(exTypeLeft);
@@ -381,9 +374,9 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 			}
 		}
 
-
 		return null;
 	}
+
 
 	/**
 	* f0 -> Identifier()
@@ -398,7 +391,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	public Object visit(ArrayAssignmentStatement n, Object argu) throws Exception{
 		///*flg*/System.out.println("ArrayAssignmentStatement");
 
-
 		String exType = n.f0.accept(this, argu).toString();
 		String[] parts = exType.split("\\|");
 		if (parts.length == 2)
@@ -406,10 +398,8 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exType.equals("this")){
 			exType = currClassName;
 		}
-		if (!exType.equals("int[]")){
+		if (!exType.equals("int[]"))
 			throw new Exception("\tExpected int[] type @ArrayAssignmentStatement");
-		}
-
 
 		exType = n.f2.accept(this, argu).toString();
 		parts = exType.split("\\|");
@@ -418,10 +408,8 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exType.equals("this")){
 			exType = currClassName;
 		}
-		if (!exType.equals("int")){
+		if (!exType.equals("int"))
 			throw new Exception("\tExpected int type @ArrayAssignmentStatement");
-		}
-
 
 		exType = n.f5.accept(this, argu).toString();
 		parts = exType.split("\\|");
@@ -430,13 +418,12 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exType.equals("this")){
 			exType = currClassName;
 		}
-		if (!exType.equals("int")){
+		if (!exType.equals("int"))
 			throw new Exception("\tExpected int type @ArrayAssignmentStatement");
-		}
-
 
 		return null;
 	}
+
 
 	/**
 	* f0 -> "if"
@@ -450,8 +437,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	public Object visit(IfStatement n, Object argu) throws Exception{
 		///*flg*/System.out.println("IfStatement");
 
-		// Remove this, it should never be null
-		if (n.f2.accept(this, argu)== null)
+		if (n.f2.accept(this, argu)== null){
 			return null;
 
 		String exType = n.f2.accept(this, argu).toString();
@@ -461,15 +447,16 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exType.equals("this")){
 			exType = currClassName;
 		}
-		if (!exType.equals("boolean")){
+		if (!exType.equals("boolean"))
 			throw new Exception("\tExpected boolean type @IfStatement");
-		}
 
 		n.f4.accept(this, argu);
+
 		n.f6.accept(this, argu);
 
 		return null;
 	}
+
 
 	/**
 	* f0 -> "while"
@@ -481,7 +468,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	public Object visit(WhileStatement n, Object argu) throws Exception{
 		///*flg*/System.out.println("WhileStatement");
 
-		// Remove this, it shoul never be null
 		if (n.f2.accept(this, argu)== null)
 			return null;
 
@@ -492,14 +478,14 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exType.equals("this")){
 			exType = currClassName;
 		}
-		if (!exType.equals("boolean")){
+		if (!exType.equals("boolean"))
 			throw new Exception("\tExpected boolean type @WhileStatement");
-		}
 
 		n.f4.accept(this, argu);
 
 		return null;
 	}
+
 
 	/**
 	* f0 -> "System.out.println"
@@ -518,13 +504,11 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exType.equals("this")){
 			exType = currClassName;
 		}
-		if (!exType.equals("int")){
+		if (!exType.equals("int"))
 			throw new Exception("\tExpected int type @PrintStatement");
-
-		}
-
 		return null;
 	}
+
 
 	/**
 	* f0 -> Clause()
@@ -536,6 +520,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 
 		String clauseTypeLeft = n.f0.accept(this, argu).toString();
 		String clauseTypeRight = n.f2.accept(this, argu).toString();
+
 		String[] partsLeft = clauseTypeLeft.split("\\|");
 		String[] partsRight = clauseTypeRight.split("\\|");
 		if (partsLeft.length == 2)
@@ -548,12 +533,12 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (clauseTypeRight.equals("this")){
 			clauseTypeRight = currClassName;
 		}
-		if (!clauseTypeLeft.equals("boolean") || !clauseTypeRight.equals("boolean")){
+		if (!clauseTypeLeft.equals("boolean") || !clauseTypeRight.equals("boolean"))
 			throw new Exception("\tExpected boolean type @AndExpression");
-		}
 
 		return "boolean";
 	}
+
 
 	/**
 	* f0 -> PrimaryExpression()
@@ -565,6 +550,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 
 		String exTypeLeft = n.f0.accept(this, argu).toString();
 		String exTypeRight = n.f2.accept(this, argu).toString();
+
 		String[] partsLeft = exTypeLeft.split("\\|");
 		String[] partsRight = exTypeRight.split("\\|");
 		if (partsLeft.length == 2)
@@ -577,12 +563,12 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exTypeRight.equals("this")){
 			exTypeRight = currClassName;
 		}
-		if (!exTypeLeft.equals("int") || !exTypeRight.equals("int")){
+		if (!exTypeLeft.equals("int") || !exTypeRight.equals("int"))
 			throw new Exception("\tExpected int type @CompareExpression");
-		}
 
 		return "boolean";
 	}
+
 
 	/**
 	* f0 -> PrimaryExpression()
@@ -594,6 +580,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 
 		String exTypeLeft = n.f0.accept(this, argu).toString();
 		String exTypeRight = n.f2.accept(this, argu).toString();
+
 		String[] partsLeft = exTypeLeft.split("\\|");
 		String[] partsRight = exTypeRight.split("\\|");
 		if (partsLeft.length == 2)
@@ -606,12 +593,12 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exTypeRight.equals("this")){
 			exTypeRight = currClassName;
 		}
-		if (!exTypeLeft.equals("int") || !exTypeRight.equals("int")){
+		if (!exTypeLeft.equals("int") || !exTypeRight.equals("int"))
 			throw new Exception("\tExpected int type @PlusExpression");
-		}
 
 		return "int";
 	}
+
 
 	/**
 	* f0 -> PrimaryExpression()
@@ -623,6 +610,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 
 		String exTypeLeft = n.f0.accept(this, argu).toString();
 		String exTypeRight = n.f2.accept(this, argu).toString();
+
 		String[] partsLeft = exTypeLeft.split("\\|");
 		String[] partsRight = exTypeRight.split("\\|");
 		if (partsLeft.length == 2)
@@ -635,12 +623,12 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exTypeRight.equals("this")){
 			exTypeRight = currClassName;
 		}
-		if (!exTypeLeft.equals("int") || !exTypeRight.equals("int")){
+		if (!exTypeLeft.equals("int") || !exTypeRight.equals("int"))
 			throw new Exception("\tExpected int type @MinusExpression, got " + n.f2.accept(this, argu).toString());
-		}
 
 		return "int";
 	}
+
 
 	/**
 	* f0 -> PrimaryExpression()
@@ -652,6 +640,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 
 		String exTypeLeft = n.f0.accept(this, argu).toString();
 		String exTypeRight = n.f2.accept(this, argu).toString();
+
 		String[] partsLeft = exTypeLeft.split("\\|");
 		String[] partsRight = exTypeRight.split("\\|");
 		if (partsLeft.length == 2)
@@ -664,12 +653,12 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exTypeRight.equals("this")){
 			exTypeRight = currClassName;
 		}
-		if (!exTypeLeft.equals("int") || !exTypeRight.equals("int")){
+		if (!exTypeLeft.equals("int") || !exTypeRight.equals("int"))
 			throw new Exception("\tExpected int type @TimesExpression");
-		}
 
 		return "int";
 	}
+
 
 	/**
 	* f0 -> PrimaryExpression()
@@ -682,6 +671,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 
 		String exTypeLeft = n.f0.accept(this, argu).toString();
 		String exTypeRight = n.f2.accept(this, argu).toString();
+
 		String[] partsLeft = exTypeLeft.split("\\|");
 		String[] partsRight = exTypeRight.split("\\|");
 		if (partsLeft.length == 2){
@@ -696,15 +686,14 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exTypeRight.equals("this")){
 			exTypeRight = currClassName;
 		}
-		if (!exTypeLeft.equals("int[]")){
+		if (!exTypeLeft.equals("int[]"))
 			throw new Exception("\tExpected int[] type @ArrayLookup");
-		}
-		if (!exTypeRight.toString().equals("int")){
+		if (!exTypeRight.toString().equals("int"))
 			throw new Exception("\tExpected int type @ArrayLookup");
-		}
 
 		return "int";
 	}
+
 
 	/**
 	* f0 -> PrimaryExpression()
@@ -721,12 +710,12 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exType.equals("this")){
 			exType = currClassName;
 		}
-		if (!exType.equals("int[]")){
+		if (!exType.equals("int[]"))
 			throw new Exception("\tExpected int[] type @ArrayLength");
-		}
 
 		return "int";
 	}
+
 
 	/**
 	* f0 -> PrimaryExpression()
@@ -748,13 +737,13 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		}
 
 		String idName = n.f2.accept(this, null).toString();
-		if (exType.equals("int") || exType.equals("int[]") || exType.equals("boolean") || exType.equals("boolean[]")){
+		if (exType.equals("int") || exType.equals("int[]") || exType.equals("boolean") || exType.equals("boolean[]"))
 			throw new Exception("\tExpected a class name type @MessageSend");
-		}
+
 		Hashtable<String, ClassInfo> stClasses = st.getClasses();
-		if (stClasses.get(exType) == null){
+		if (stClasses.get(exType) == null)
 			throw new Exception("\tMissing class Declaration @MessageSend " + exType + " " + idName);
-		}
+
 		Hashtable<String, MethodInfo> stMethods = st.getMethods();
 		MethodInfo currMethod = stMethods.get(exType + "." + idName);
 		if (currMethod == null){
@@ -767,18 +756,16 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 					break;
 				}
 			}
-			if (flag){
+			if (flag)
 				throw new Exception("\tFind a good name @MessageSend " + exType);
-			}
 		}
-
 
 		if (n.f4.present()){
 			String exList = n.f4.accept(this, argu).toString();
 			parts = exList.split(",");
 			int totalPars = currMethod.parNames.length;
 			/// do the same smqhere else
-			if(currMethod.parTypes == null){
+			if (currMethod.parTypes == null){
 				if (parts != null)
 					throw new Exception("\tWrong number of arguments @MessageSend");
 			}
@@ -798,7 +785,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 					currExType = currClassName;
 				}
 				if (!currExType.equals(currMethod.parTypes[currExPos])){
-					// Then we should check if the current type has same types from inheritance
+					/* Then we should check if the current type has same types from inheritance */
 					String[] parentClassNames = st.getParentClassesNames(currExType);
 					// apply this kai sta ypoloipa
 					boolean flag = true;
@@ -812,13 +799,12 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 			}
 		}
 
-		if (currMethod.type == null){
+		if (currMethod.type == null)
 			throw new Exception("\tCan not return null type @MessageSend");
-
-		}
 
 		return currMethod.type;
 	}
+
 
 	/**
 	* f0 -> Expression()
@@ -830,13 +816,13 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		Object currEx = n.f0.accept(this, argu);
 		Object currExTail = n.f1.accept(this, argu);
 		if (currEx != null){
-			if(currExTail!=null)
+			if (currExTail!=null)
 				return currEx.toString() + currExTail.toString();
 			return currEx.toString();
     	}
-
     	return null;
 	}
+
 
 	/**
 	* f0 -> ( ExpressionTerm() )*
@@ -848,11 +834,11 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		String currExTail = "";
 		for (int currExPos = 0; currExPos < totalExprs; currExPos++)
 			currExTail = currExTail + "," + n.f0.elementAt(currExPos).accept(this, argu).toString();
-		if(currExTail != null)
+		if (currExTail != null)
 			return currExTail;
-
 		return null;
    }
+
 
 	/**
 	* f0 -> ","
@@ -863,6 +849,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		return n.f1.accept(this, argu);
 	}
 
+
 	/**
 	* f0 -> <INTEGER_LITERAL>
 	*/
@@ -871,6 +858,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		return "int";
 	}
 
+
 	/**
 	* f0 -> "true"
 	*/
@@ -878,12 +866,14 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		return "boolean";
 	}
 
+
 	/**
 	* f0 -> "false"
 	*/
 	public Object visit(FalseLiteral n, Object argu) throws Exception{
 		return "boolean";
 	}
+
 
 	/**
 	* f0 -> <IDENTIFIER>
@@ -895,12 +885,14 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		return n.f0.toString();
 	}
 
+
 	/**
 	* f0 -> "this"
 	*/
 	public Object visit(ThisExpression n, Object argu) throws Exception{
 		return n.f0.toString();
 	}
+
 
 	/**
 	* f0 -> "new"
@@ -919,12 +911,11 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exType.equals("this")){
 			exType = currClassName;
 		}
-		if (exType.equals("boolean")){
+		if (exType.equals("boolean"))
 			throw new Exception("\tExpected int type @BooleanArrayAllocationExpression");
-		}
-
 		return null;
 	}
+
 
 	/**
 	* f0 -> "new"
@@ -943,12 +934,11 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exType.equals("this")){
 			exType = currClassName;
 		}
-		if (!exType.equals("int")){
+		if (!exType.equals("int"))
 			throw new Exception("\tExpected int type @IntegerArrayAllocationExpression, got "+ exType);
-		}
-
 		return null;
 	}
+
 
 	/**
 	* f0 -> "new"
@@ -962,11 +952,11 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		String idName = n.f1.accept(this, null).toString();
 		Hashtable<String, ClassInfo> stClasses = st.getClasses();
 		ClassInfo currClass = stClasses.get(idName);
-		if (currClass == null){
+		if (currClass == null)
 			throw new Exception("\tMissing Declaration @AllocationExpression: " + idName);
-		}
 		return idName;
 	}
+
 
 	/**
 	* f0 -> "!"
@@ -975,7 +965,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	public Object visit(NotExpression n, Object argu) throws Exception{
 		///*flg*/System.out.println("NotExpression");
 
-		// Remove this, it should never be null
 		if (n.f1.accept(this, argu)== null)
 			return null;
 
@@ -986,13 +975,11 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (clauseType.equals("this")){
 			clauseType = currClassName;
 		}
-		if (!clauseType.equals("boolean")){
+		if (!clauseType.equals("boolean"))
 			throw new Exception("\tExpected boolean type @NotExpression");
-
-		}
-
 		return "boolean";
 	}
+
 
 	/**
 	* f0 -> "("

@@ -332,7 +332,7 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 				if (extenderClassMethod.type != methodType){
 					throw new Exception("\tDifferent MethodInfo Type from superclass: " + fullMethodName);
 				}
-				if(extenderClassMethod.parNames == null){
+				if (extenderClassMethod.parNames == null){
 					if (totalPars != 0){
 						throw new Exception("\tWrong number of arguments @MethodDeclaration");
 					}
@@ -377,7 +377,7 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 		Object currPar = n.f0.accept(this, argu);
 		Object currParTail = n.f1.accept(this, argu);
 		if (currPar != null){
-			if(currParTail!=null)
+			if (currParTail!=null)
 				return currPar.toString() + currParTail.toString();
 			return currPar.toString();
 		}
@@ -401,7 +401,7 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 		String currParTail = "";
 		for (int currParPos = 0; currParPos < totalPars; currParPos++)
 			currParTail = currParTail + "," + n.f0.elementAt(currParPos).accept(this, argu).toString();
-		if(currParTail != null)
+		if (currParTail != null)
 			return currParTail;
 
 		return null;

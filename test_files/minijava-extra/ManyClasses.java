@@ -18,7 +18,7 @@ class A {
 
     public int get(){
         int rv;
-        if(data){
+        if (data){
             rv = 1;
         }
         else{

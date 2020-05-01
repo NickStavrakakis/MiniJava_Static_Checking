@@ -12,7 +12,7 @@ class Main {
 
 		SymbolTable st = new SymbolTable();
 
-		if(args.length < 1){
+		if (args.length < 1){
 			System.err.println("No File Given");
 			System.exit(1);
 		}
@@ -20,7 +20,7 @@ class Main {
 		FileInputStream fis_A = null;
 		FileInputStream fis_B = null;
 
-		for(int arg = 0; arg<args.length; arg++) {
+		for(int arg = 0; arg<args.length; arg++){
 
 			try{
 
@@ -30,6 +30,7 @@ class Main {
 				MiniJavaParser parser_A = new MiniJavaParser(fis_A);
 				System.out.println("\n" + currFileName + " parsed successfully.");
 
+				/* ---------EXECUTING VISITOR A: DefCollectVisitor--------- */
 				DefCollectVisitor visitor_A = new DefCollectVisitor();
 				Goal root_A = parser_A.Goal();
 				root_A.accept(visitor_A, null);
@@ -38,14 +39,16 @@ class Main {
 
 				fis_B = new FileInputStream(currFileName);
 				MiniJavaParser parser_B = new MiniJavaParser(fis_B);
+
+				/* ---------EXECUTING VISITOR B: TypeCheckVisitor---------- */
 				TypeCheckVisitor visitor_B = new TypeCheckVisitor(st);
 				Goal root_B = parser_B.Goal();
 				root_B.accept(visitor_B, null);
 				System.out.println("\tVisitor B ended successfully");
 				System.out.println();
 
-				/* ---------PRINTING OFFSETS--------- */
 
+				/* --------------------PRINTING OFFSETS-------------------- */
 				/* creating hashtables to store the offsets for every class */
 				Hashtable<String, Integer> varOffsets = new Hashtable<String, Integer>();
 				Hashtable<String, Integer> methOffsets = new Hashtable<String, Integer>();
@@ -55,57 +58,44 @@ class Main {
 
 				List<String> alreadyVisited = new ArrayList<>();
 
-				// Calculating the offsets until every class has been visited = Symbol Table of classes is Empty
-				int i = 0;
+				/* Calculating the offsets until every class has been visited = Symbol Table of classes is Empty */
 				while (!stClasses.isEmpty()){
-					i++;
-					//System.out.println("BIG LOOP " + stClasses);
 
-					// Removing from the Symbol Table the already printed/visited classes
-					for (String className: alreadyVisited) {
+					/* Removing from the Symbol Table the already printed/visited classes */
+					for (String className: alreadyVisited){
 						stClasses.remove(className);
 					}
 
-					// We copy our hash table to a set so we can visit every element
+					/* We copy our hash table to a set so we can visit every element */
 					Set<String> keys = stClasses.keySet();
 					boolean skipped_main = false;
 			        for (String key: keys){
-						//System.out.println("SMALL LOOP");
 
 						ClassInfo currClass = stClasses.get(key);
 
-						// We don't print/calculate the main's class offsets, so we added to the two offset tables and then we skip it
-						if (skipped_main != true) {
+						/* We don't print/calculate the main's class offsets, so we added to the two offset tables and then we skip it  */
+						if (skipped_main != true){
 							if (currFileName.endsWith("/" + currClass.name + ".java")){
 								skipped_main = true;
 								varOffsets.put(currClass.name, 0);
-								//System.out.println("Added " + currClass.name + " to varOffsets (0)");
 								methOffsets.put(currClass.name, 0);
 								alreadyVisited.add(currClass.name);
 								continue;
 							}
 						}
 
-						/* if has a super class, take its offset count */
+
 						int varOffsetCounter;
-
 						if (currClass.nameExtends != null){
-						//System.out.println("currClass.name: " + currClass.name + ", currClass.nameExtends: " + currClass.nameExtends);
-
-
-
-
 							// if its superclass is not on the offset table, that means that we have not calculated and printed the offsets of that class
-							// so we skip this class until the above happens
-							if (varOffsets.get(currClass.nameExtends) != null){
+							// so we skip this class until the above happens, else we take its offset count
+							if (varOffsets.get(currClass.nameExtends) != null)
 								varOffsetCounter = varOffsets.get(currClass.nameExtends);
-							}
 							else
 								continue;
 						}
 						else
 							varOffsetCounter = 0;
-
 
 						System.out.println("-----------Class " + currClass.name + " -----------");
 
@@ -117,7 +107,7 @@ class Main {
 							int totalVars = currClass.varNames.length;
 							for (int currVarPos = 0; currVarPos < totalVars; currVarPos++){
 				            	System.out.println(currClass.name + "." + currClass.varNames[currVarPos] + " : " + varOffsetCounter);
-								switch(currClass.varTypes[currVarPos]) {
+								switch(currClass.varTypes[currVarPos]){
 									case "int":
 										varOffsetCounter = varOffsetCounter + 4;
 										break;
@@ -128,8 +118,6 @@ class Main {
 										varOffsetCounter = varOffsetCounter + 8;
 								}
 							}
-
-							//System.out.println("Added " + currClass.name + " to varOffsets (" + varOffsetCounter + ")");
 						}
 						varOffsets.put(currClass.name, varOffsetCounter);
 
@@ -141,9 +129,6 @@ class Main {
 						if (methOffsets.get(currClass.name) == null)
 							methOffsets.put(currClass.name, 0);
 
-
-
-
 						/* if has a super class, take its offset count */
 						int methOffsetCounter;
 						if (currClass.nameExtends != null){
@@ -154,7 +139,6 @@ class Main {
 						}
 						else
 							methOffsetCounter = 0;
-
 
 						if (currClass.methods != null){
 							for (String method: currClass.methods){
@@ -180,6 +164,7 @@ class Main {
 						System.out.println();
 					}
 				}
+				System.out.println();
 			}
 			catch(ParseException ex){
 				System.out.println(ex.getMessage());
@@ -188,14 +173,12 @@ class Main {
 				System.err.println(ex.getMessage());
 			}
 			catch(Exception ex){
-				System.err.println("\u001B[31m" + ex.getMessage() + "\u001B[0m");
-				ex.printStackTrace();
-
+				System.err.println(ex.getMessage());
 			}
 			finally{
 				try{
-					if(fis_A != null) fis_A.close();
-					if(fis_B != null) fis_B.close();
+					if (fis_A != null) fis_A.close();
+					if (fis_B != null) fis_B.close();
 				}
 				catch(IOException ex){
 					System.err.println(ex.getMessage());
