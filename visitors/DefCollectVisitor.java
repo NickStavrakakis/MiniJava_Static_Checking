@@ -62,7 +62,7 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 			for (int i = 0; i < totalVars; i++){
 				for (int j = 0; j < totalVars; j++){
 					if ((i != j) && (varNames[i].equals(varNames[j])))
-						throw new Exception("\terror: variable " +  varNames[i] + " is already defined in class " + className);
+						throw new Exception("\terror: variable " + varNames[i] + " is already defined in class " + className);
 				}
 			}
 		}
@@ -120,7 +120,7 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 			for (int i = 0; i < totalVars; i++){
 				for (int j = 0; j < totalVars; j++){
 					if ((i != j) && (varNames[i].equals(varNames[j])))
-						throw new Exception("\terror: variable " +  varNames[i] + " is already defined in class " + className);
+						throw new Exception("\terror: variable " + varNames[i] + " is already defined in class " + className);
 				}
 			}
 		}
@@ -185,7 +185,7 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 			for (int i = 0; i < totalVars; i++){
 				for (int j = 0; j < totalVars; j++){
 					if ((i != j) && (varNames[i].equals(varNames[j])))
-						throw new Exception("\terror: variable " +  varNames[i] + " is already defined in class " + className);
+						throw new Exception("\terror: variable " + varNames[i] + " is already defined in class " + className);
 				}
 			}
 		}
@@ -272,7 +272,7 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 			for (int i = 0; i < totalPars; i++){
 				for (int j = 0; j < totalPars; j++){
 					if ((i != j) && (parNames[i].equals(parNames[j])))
-						throw new Exception("\terror: variable " +  parNames[i] + " is already defined in method " + methodName);
+						throw new Exception("\terror: variable " + parNames[i] + " is already defined in method " + methodName);
 				}
 			}
 		}
@@ -292,11 +292,11 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 			for (int i = 0; i < totalVars; i++){
 				for (int j = 0; j < totalPars; j++){
 					if (varNames[i].equals(parNames[j]))
-						throw new Exception("\terror: variable " +  varNames[i] + " is already defined in method " + methodName);
+						throw new Exception("\terror: variable " + varNames[i] + " is already defined in method " + methodName);
 				}
 				for (int j = 0; j < totalVars; j++){
 					if ((i != j) && (varNames[i].equals(varNames[j])))
-						throw new Exception("\terror: variable " +  varNames[i] + " is already defined in method " + methodName);
+						throw new Exception("\terror: variable " + varNames[i] + " is already defined in method " + methodName);
 				}
 			}
 		}

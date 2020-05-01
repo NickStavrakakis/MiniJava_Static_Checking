@@ -1,6 +1,6 @@
 package types;
 
-public class ClassInfo {
+public class ClassInfo{
 
 	public String name;
 	public String nameExtends;

@@ -7,7 +7,7 @@ import types.ClassInfo;
 import types.MethodInfo;
 import types.SymbolTable;
 
-class Main {
+class Main{
 	public static void main (String [] args){
 
 		SymbolTable st = new SymbolTable();
@@ -69,11 +69,11 @@ class Main {
 					/* We copy our hash table to a set so we can visit every element */
 					Set<String> keys = stClasses.keySet();
 					boolean skipped_main = false;
-			        for (String key: keys){
+					for (String key: keys){
 
 						ClassInfo currClass = stClasses.get(key);
 
-						/* We don't print/calculate the main's class offsets, so we added to the two offset tables and then we skip it  */
+						/* We don't print/calculate the main's class offsets, so we added to the two offset tables and then we skip it */
 						if (skipped_main != true){
 							if (currFileName.endsWith("/" + currClass.name + ".java")){
 								skipped_main = true;
@@ -88,7 +88,7 @@ class Main {
 						int varOffsetCounter;
 						if (currClass.nameExtends != null){
 							/* if its superclass is not on the offset table, that means that we have not calculated and printed the offsets of that class
-							   so we skip this class until the above happens, else we take its offset count */
+						 	so we skip this class until the above happens, else we take its offset count */
 							if (varOffsets.get(currClass.nameExtends) != null)
 								varOffsetCounter = varOffsets.get(currClass.nameExtends);
 							else
@@ -106,7 +106,7 @@ class Main {
 						if (currClass.varNames != null){
 							int totalVars = currClass.varNames.length;
 							for (int currVarPos = 0; currVarPos < totalVars; currVarPos++){
-				            	System.out.println(currClass.name + "." + currClass.varNames[currVarPos] + " : " + varOffsetCounter);
+								System.out.println(currClass.name + "." + currClass.varNames[currVarPos] + " : " + varOffsetCounter);
 								switch(currClass.varTypes[currVarPos]){
 									case "int":
 										varOffsetCounter = varOffsetCounter + 4;
@@ -152,7 +152,7 @@ class Main {
 									}
 								}
 								if (inheritanceExist != true){
-				            		System.out.println(method + " : " + methOffsetCounter);
+									System.out.println(method + " : " + methOffsetCounter);
 									methOffsetCounter = methOffsetCounter + 8;
 								}
 							}
@@ -173,7 +173,7 @@ class Main {
 				System.err.println(ex.getMessage());
 			}
 			catch(Exception ex){
-				System.err.println(ex.getMessage());	
+				System.err.println(ex.getMessage());
 				System.out.println();
 			}
 			finally{

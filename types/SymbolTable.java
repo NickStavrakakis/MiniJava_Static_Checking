@@ -3,7 +3,7 @@ import java.util.Hashtable;
 import types.ClassInfo;
 import types.MethodInfo;
 
-public class SymbolTable {
+public class SymbolTable{
 
 	private Hashtable<String, ClassInfo> stClasses = new Hashtable<String, ClassInfo>();
 	private Hashtable<String, MethodInfo> stMethods = new Hashtable<String, MethodInfo>();

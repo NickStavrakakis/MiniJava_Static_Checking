@@ -205,7 +205,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f0 -> FormalParameter()
 	* f1 -> FormalParameterTail()
 	*/
-    public Object visit(FormalParameterList n, Object argu) throws Exception{
+	public Object visit(FormalParameterList n, Object argu) throws Exception{
 
 		Object currPar = n.f0.accept(this, argu);
 		Object currParTail = n.f1.accept(this, argu);
@@ -213,24 +213,24 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 			if (currParTail!=null)
 				return currPar.toString() + currParTail.toString();
 			return currPar.toString();
-    	}
-    	return null;
-    }
+		}
+		return null;
+	}
 
 
 	/**
 	* f0 -> Type()
 	* f1 -> Identifier()
 	*/
-    public Object visit(FormalParameter n, Object argu) throws Exception{
+	public Object visit(FormalParameter n, Object argu) throws Exception{
 		return n.f0.accept(this, argu).toString() + " " + n.f1.accept(this, null).toString();
-    }
+	}
 
 
 	/**
 	* f0 -> ( FormalParameterTerm() )*
 	*/
-    public Object visit(FormalParameterTail n, Object argu) throws Exception{
+	public Object visit(FormalParameterTail n, Object argu) throws Exception{
 
 		int totalPars = n.f0.size();
 		String currParTail = "";
@@ -253,7 +253,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 
 	/**
 	* f0 -> BooleanArrayType()
-	*       | IntegerArrayType()
+	*		| IntegerArrayType()
 	*/
 	public Object visit(ArrayType n, Object argu) throws Exception{
 		return n.f0.accept(this, argu).toString();
@@ -823,15 +823,15 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 			if (currExTail!=null)
 				return currEx.toString() + currExTail.toString();
 			return currEx.toString();
-    	}
-    	return null;
+		}
+		return null;
 	}
 
 
 	/**
 	* f0 -> ( ExpressionTerm() )*
 	*/
-    public Object visit(ExpressionTail n, Object argu) throws Exception{
+	public Object visit(ExpressionTail n, Object argu) throws Exception{
 
 		int totalExprs = n.f0.size();
 		String currExTail = "";
@@ -840,7 +840,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		if (currExTail != null)
 			return currExTail;
 		return null;
-   }
+	}
 
 
 	/**

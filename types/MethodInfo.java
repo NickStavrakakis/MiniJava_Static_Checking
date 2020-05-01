@@ -1,6 +1,6 @@
 package types;
 
-public class MethodInfo {
+public class MethodInfo{
 
 	public String type;
 	public String name;
