@@ -87,8 +87,8 @@ class Main {
 
 						int varOffsetCounter;
 						if (currClass.nameExtends != null){
-							// if its superclass is not on the offset table, that means that we have not calculated and printed the offsets of that class
-							// so we skip this class until the above happens, else we take its offset count
+							/* if its superclass is not on the offset table, that means that we have not calculated and printed the offsets of that class
+							   so we skip this class until the above happens, else we take its offset count */
 							if (varOffsets.get(currClass.nameExtends) != null)
 								varOffsetCounter = varOffsets.get(currClass.nameExtends);
 							else
@@ -134,7 +134,7 @@ class Main {
 						if (currClass.nameExtends != null){
 							if (methOffsets.get(currClass.nameExtends) != null)
 								methOffsetCounter = methOffsets.get(currClass.nameExtends);
-							else // will not happen, but we keep it for safety
+							else /* will not happen, but we keep it for safety */
 								continue;
 						}
 						else
@@ -159,7 +159,7 @@ class Main {
 						}
 						methOffsets.put(currClass.name, methOffsetCounter);
 
-						// add the current class to the visited list, to remove it before the next bih loop
+						/* add the current class to the visited list, to remove it before the next big loop */
 						alreadyVisited.add(currClass.name);
 						System.out.println();
 					}
@@ -173,7 +173,8 @@ class Main {
 				System.err.println(ex.getMessage());
 			}
 			catch(Exception ex){
-				System.err.println(ex.getMessage());
+				System.err.println(ex.getMessage());	
+				System.out.println();
 			}
 			finally{
 				try{

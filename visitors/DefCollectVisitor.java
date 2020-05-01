@@ -11,9 +11,11 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 	/* Creating our Symbol Table */
 	public SymbolTable st;
 
+
 	public DefCollectVisitor(){
 		st = new SymbolTable();
 	}
+
 
 	/**
 	* f0 -> "class"
@@ -37,9 +39,7 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 	*/
 	public Object visit(MainClass n, Object argu) throws Exception{
 
-
 		String className = n.f1.accept(this, argu).toString();
-
 
 		String[] methodIdTypes = new String[1];
 		String[] methodIdNames = new String[1];
@@ -61,13 +61,11 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 			/* Checking also if the variables are already defined */
 			for (int i = 0; i < totalVars; i++){
 				for (int j = 0; j < totalVars; j++){
-					if ((i != j) && (varNames[i].equals(varNames[j]))){
-						throw new Exception("\tMultiple Definition: " + className + "." + varNames[i]);
-					}
+					if ((i != j) && (varNames[i].equals(varNames[j])))
+						throw new Exception("\terror: variable " +  varNames[i] + " is already defined in class " + className);
 				}
 			}
 		}
-
 
 		/* ---------CLASSES--------- */
 		/* Creating the information class for the current Class */
@@ -79,7 +77,6 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 		Hashtable<String, ClassInfo> stClasses = st.getClasses();
 		stClasses.put(className, currClass);
 
-
 		/* ---------METHODS--------- */
 		/* Creating the information class for the main method */
 		MethodInfo currMethod = new MethodInfo();
@@ -88,9 +85,9 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 		Hashtable<String, MethodInfo> stMethods = st.getMethods();
 		stMethods.put(className + "." + mainMethod[0], currMethod);
 
-
 		return null;
 	}
+
 
 	/**
 	* f0 -> "class"
@@ -102,14 +99,11 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 	*/
 	public Object visit(ClassDeclaration n, Object argu) throws Exception{
 
-
 		String className = n.f1.accept(this, argu).toString();
 		/* Checking also if the class is already defined */
 		Hashtable<String, ClassInfo> stClasses = st.getClasses();
-		if (stClasses.get(className) != null){
-			throw new Exception("\tMultiple Definition: " + className);
-		}
-
+		if (stClasses.get(className) != null)
+			throw new Exception("\terror: duplicate class " + className);
 
 		String[] varTypes = null;
 		String[] varNames = null;
@@ -125,13 +119,11 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 			/* Checking also if the variables are already defined */
 			for (int i = 0; i < totalVars; i++){
 				for (int j = 0; j < totalVars; j++){
-					if ((i != j) && (varNames[i].equals(varNames[j]))){
-						throw new Exception("\tMultiple Definition: " + className + "." + varNames[i]);
-					}
+					if ((i != j) && (varNames[i].equals(varNames[j])))
+						throw new Exception("\terror: variable " +  varNames[i] + " is already defined in class " + className);
 				}
 			}
 		}
-
 
 		String[] methods = null;
 		if (n.f4.present()){
@@ -142,7 +134,6 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 			}
 		}
 
-
 		/* ---------CLASSES--------- */
 		/* Creating the information class for the current Class */
 		ClassInfo currClass = new ClassInfo();
@@ -151,9 +142,9 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 		// Hashtable<String, ClassInfo> stClasses = st.getClasses();
 		stClasses.put(className, currClass);
 
-
 		return null;
 	}
+
 
 	/**
 	* f0 -> "class"
@@ -167,22 +158,17 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 	*/
 	public Object visit(ClassExtendsDeclaration n, Object argu) throws Exception{
 
-
 		String className = n.f1.accept(this, argu).toString();
 		/* Checking also if the class is already defined */
 		Hashtable<String, ClassInfo> stClasses = st.getClasses();
-		if (stClasses.get(className) != null){
-			throw new Exception("\tMultiple Definition: " + className);
-		}
-
+		if (stClasses.get(className) != null)
+			throw new Exception("\terror: duplicate class " + className);
 
 		String classExtendsName = n.f3.accept(this, argu).toString();
 		/* Checking also if the extend class has been defined */
 		// Hashtable<String, ClassInfo> stClasses = st.getClasses();
-		if (stClasses.get(classExtendsName) == null){
-			throw new Exception("\tMissing Declaration: " + classExtendsName);
-		}
-
+		if (stClasses.get(classExtendsName) == null)
+			throw new Exception("\terror: cannot find symbol " + classExtendsName);
 
 		String[] varTypes = null;
 		String[] varNames = null;
@@ -198,13 +184,11 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 			/* Checking also if the variables are already defined */
 			for (int i = 0; i < totalVars; i++){
 				for (int j = 0; j < totalVars; j++){
-					if ((i != j) && (varNames[i].equals(varNames[j]))){
-						throw new Exception("\tMultiple Definition: " + className + "." + varNames[i]);
-					}
+					if ((i != j) && (varNames[i].equals(varNames[j])))
+						throw new Exception("\terror: variable " +  varNames[i] + " is already defined in class " + className);
 				}
 			}
 		}
-
 
 		String[] methods = null;
 		if (n.f6.present()){
@@ -215,7 +199,6 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 			}
 		}
 
-
 		/* ---------CLASSES--------- */
 		/* Creating the information class for the current Class */
 		ClassInfo currClass = new ClassInfo();
@@ -223,7 +206,6 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 		/* Inserting this class in our Class' Hashtable */
 		// Hashtable<String, ClassInfo> stClasses = st.getClasses();
 		stClasses.put(className, currClass);
-
 
 		return null;
 	}
@@ -236,6 +218,7 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 	public Object visit(VarDeclaration n, Object argu) throws Exception{
 		return n.f0.accept(this, argu) + " " + n.f1.accept(this, argu);
 	}
+
 
 	/**
 	* f0 -> "public"
@@ -255,25 +238,20 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 	public Object visit(MethodDeclaration n, Object argu) throws Exception{
 		/* argu = Method's Class Name + < + Method's Class Extender Name if exists*/
 
-
 		String[] parts = argu.toString().split("<");
 		String className = parts[0];
 		String classExtendsName = null;
 		if (parts.length == 2)
 			classExtendsName = parts[1];
 
-
 		String methodType = n.f1.accept(this, className).toString();
-
 
 		String methodName = n.f2.accept(this, className).toString();
 		String fullMethodName = className + "." + methodName;
 		/* Checking also if the method is already defined */
 		Hashtable<String, MethodInfo> stMethods = st.getMethods();
-		if (stMethods.get(fullMethodName) != null){
-			throw new Exception("\tMultiple Definition: " + fullMethodName);
-		}
-
+		if (stMethods.get(fullMethodName) != null)
+			throw new Exception("\terror: method " + methodName + " is already defined");
 
 		String[] parTypes = null;
 		String[] parNames = null;
@@ -293,13 +271,11 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 			/* Checking also if the parameters are already defined */
 			for (int i = 0; i < totalPars; i++){
 				for (int j = 0; j < totalPars; j++){
-					if ((i != j) && (parNames[i].equals(parNames[j]))){
-						throw new Exception("\tMultiple Definition: " + fullMethodName + "." + parNames[i]);
-					}
+					if ((i != j) && (parNames[i].equals(parNames[j])))
+						throw new Exception("\terror: variable " +  parNames[i] + " is already defined in method " + methodName);
 				}
 			}
 		}
-
 
 		String[] varTypes = null;
 		String[] varNames = null;
@@ -312,61 +288,52 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 				varTypes[currVarPos] = currVar[0];
 				varNames[currVarPos] = currVar[1];
 			}
-			/* Checking also if the parameters are already defined */
+			/* Checking also if the variables are already defined */
 			for (int i = 0; i < totalVars; i++){
 				for (int j = 0; j < totalPars; j++){
-					if (varNames[i].equals(parNames[j])){
-						throw new Exception("\tMultiple Definition: " + fullMethodName + "." + varNames[i]);
-					}
+					if (varNames[i].equals(parNames[j]))
+						throw new Exception("\terror: variable " +  varNames[i] + " is already defined in method " + methodName);
 				}
 				for (int j = 0; j < totalVars; j++){
-					if ((i != j) && (varNames[i].equals(varNames[j]))){
-						throw new Exception("\tMultiple Definition: " + fullMethodName + "." + varNames[i]);
-					}
+					if ((i != j) && (varNames[i].equals(varNames[j])))
+						throw new Exception("\terror: variable " +  varNames[i] + " is already defined in method " + methodName);
 				}
 			}
 		}
 		if (classExtendsName != null){
 			MethodInfo extenderClassMethod = stMethods.get(classExtendsName + "." + methodName);
 			if (extenderClassMethod != null){
-				if (extenderClassMethod.type != methodType){
-					throw new Exception("\tDifferent MethodInfo Type from superclass: " + fullMethodName);
-				}
+				if (extenderClassMethod.type != methodType)
+					throw new Exception("\terror: " + methodName + " in " + className + " cannot override " + methodName + " in classExtendsName");
+
 				if (extenderClassMethod.parNames == null){
-					if (totalPars != 0){
-						throw new Exception("\tWrong number of arguments @MethodDeclaration");
-					}
+					if (totalPars != 0)
+						throw new Exception("\terror: " + methodName + " in " + className + " cannot override " + methodName + " in classExtendsName");
 				}
 				else{
-					if (totalPars != extenderClassMethod.parNames.length){
-						throw new Exception("\tWrong number of arguments @MethodDeclaration");
-					}
+					if (totalPars != extenderClassMethod.parNames.length)
+						throw new Exception("\terror: " + methodName + " in " + className + " cannot override " + methodName + " in classExtendsName");
 				}
 				for (int i = 0; i < totalPars; i++){
 					for (int j = 0; j < extenderClassMethod.parNames.length; j++){
-						if (!parTypes[i].equals(extenderClassMethod.parTypes[j])){
-							throw new Exception("\tDifferent Variable Type from superclass: " + fullMethodName + "." + parTypes[i] + "." + parNames[i]);
-						}
-						if (!parNames[i].equals(extenderClassMethod.parNames[j])){
-							throw new Exception("\tDifferent Variable Name from superclass: " + fullMethodName + "." + parTypes[i] + "." + parNames[i]);
-						}
+						if (!parTypes[i].equals(extenderClassMethod.parTypes[j]) || !parNames[i].equals(extenderClassMethod.parNames[j]))
+							throw new Exception("\terror: " + methodName + " in " + className + " cannot override " + methodName + " in classExtendsName");
 					}
 				}
 			}
 		}
-
 
 		/* ---------METHODS--------- */
 		/* Creating the information class for the main method */
 		MethodInfo currMethod = new MethodInfo();
 		currMethod.addMethod(methodType, fullMethodName, className, parTypes, parNames, varTypes, varNames);
 		/* Inserting this class in our Methods' Hashtable */
-		//Hashtable<String, MethodInfo> stMethods = st.getMethods();
+		// Hashtable<String, MethodInfo> stMethods = st.getMethods();
 		stMethods.put(fullMethodName, currMethod);
-
 
 		return fullMethodName;
 	}
+
 
 	/**
 	* f0 -> FormalParameter()
@@ -384,6 +351,7 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 		return null;
 	}
 
+
 	/**
 	* f0 -> Type()
 	* f1 -> Identifier()
@@ -391,6 +359,7 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 	public Object visit(FormalParameter n, Object argu) throws Exception{
 		return n.f0.accept(this, argu).toString() + " " + n.f1.accept(this, argu).toString();
 	}
+
 
 	/**
 	* f0 -> ( FormalParameterTerm() )*
@@ -407,6 +376,7 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 		return null;
 	}
 
+
 	/**
 	* f0 -> ","
 	* f1 -> FormalParameter()
@@ -414,6 +384,7 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 	public Object visit(FormalParameterTerm n, Object argu) throws Exception{
 		return n.f1.accept(this, argu);
 	}
+
 
 	/**
 	* f0 -> BooleanArrayType()
@@ -424,13 +395,14 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 	}
 
 	/**
-		* f0 -> "boolean"
-		* f1 -> "["
-		* f2 -> "]"
-		*/
+	* f0 -> "boolean"
+	* f1 -> "["
+	* f2 -> "]"
+	*/
 	public Object visit(BooleanArrayType n, Object argu) throws Exception{
 		return n.f0.toString() + n.f1.toString() + n.f2.toString();
 	}
+
 
 	/**
 	* f0 -> "int"
@@ -441,6 +413,7 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 		return n.f0.toString() + n.f1.toString() + n.f2.toString();
 	}
 
+
 	/**
 	* f0 -> "boolean"
 	*/
@@ -448,12 +421,14 @@ public class DefCollectVisitor extends GJDepthFirst<Object, Object>{
 		return n.f0.toString();
 	}
 
+
 	/**
 	* f0 -> "int"
 	*/
 	public Object visit(IntegerType n, Object argu) throws Exception{
 		return n.f0.toString();
 	}
+
 
 	/**
 	* f0 -> <IDENTIFIER>

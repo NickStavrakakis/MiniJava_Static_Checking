@@ -40,7 +40,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f17 -> "}"
 	*/
 	public Object visit(MainClass n, Object argu) throws Exception{
-		///*flg*/System.out.println("MainClass");
 
 		String className = n.f1.accept(this, null).toString();
 		currClassName = className;
@@ -76,7 +75,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f5 -> "}"
 	*/
 	public Object visit(ClassDeclaration n, Object argu) throws Exception{
-		///*flg*/System.out.println("ClassDeclaration");
 
 		String className = n.f1.accept(this, null).toString();
 		currClassName = className;
@@ -110,7 +108,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f7 -> "}"
 	*/
 	public Object visit(ClassExtendsDeclaration n, Object argu) throws Exception{
-		///*flg*/System.out.println("ClassExtendsDeclaration");
 
 		String className = n.f1.accept(this, null).toString();
 		currClassName = className;
@@ -163,7 +160,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	*/
 	public Object visit(MethodDeclaration n, Object argu) throws Exception{
 		/* argu = Method's Class Name + < + Method's Class Extender Name if exists*/
-		///*flg*/ System.out.println("MethodDeclaration");
 
 		String[] parts = argu.toString().split("<");
 		String className = parts[0];
@@ -200,8 +196,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (retType.equals("this"))
 			retType = currClassName;
 		if (!retType.equals(methodType))
-			throw new Exception("\tExpected " + methodType + " type @MethodDeclaration");
-
+			throw new Exception("\terror: incompatible types: " + retType + " cannot be converted to " + methodType);
 		return fullMethodName;
 	}
 
@@ -261,7 +256,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	*       | IntegerArrayType()
 	*/
 	public Object visit(ArrayType n, Object argu) throws Exception{
-		///*flg*/System.out.println("ArrayType");
 		return n.f0.accept(this, argu).toString();
 	}
 
@@ -272,7 +266,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f2 -> "]"
 	*/
 	public Object visit(BooleanArrayType n, Object argu) throws Exception{
-		///*flg*/System.out.println("BooleanArrayType");
 		return n.f0.toString() + n.f1.toString() + n.f2.toString();
 	}
 
@@ -283,7 +276,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f2 -> "]"
 	*/
 	public Object visit(IntegerArrayType n, Object argu) throws Exception{
-		///*flg*/System.out.println("IntegerArrayType");
 		return n.f0.toString() + n.f1.toString() + n.f2.toString();
 	}
 
@@ -292,7 +284,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f0 -> "boolean"
 	*/
 	public Object visit(BooleanType n, Object argu) throws Exception{
-		///*flg*/System.out.println("BooleanType");
 		return n.f0.toString();
 	}
 
@@ -301,7 +292,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f0 -> "int"
 	*/
 	public Object visit(IntegerType n, Object argu) throws Exception{
-		///*flg*/System.out.println("IntegerType");
 		return n.f0.toString();
 	}
 
@@ -312,7 +302,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f2 -> "}"
 	*/
 	public Object visit(Block n, Object argu) throws Exception{
-		///*flg*/System.out.println("Block");
 
 		if (n.f1.present()){
 			int totalStatements = n.f1.size();
@@ -331,7 +320,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f3 -> ";"
 	*/
 	public Object visit(AssignmentStatement n, Object argu) throws Exception{
-		///*flg*/System.out.println("AssignmentStatement");
 
 		if (n.f2.accept(this, argu)== null)
 			return null;
@@ -355,22 +343,22 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		if (!exTypeLeft.equals(exTypeRight)){
 			String[] parentClassNames = st.getParentClassesNames(exTypeLeft);
 			boolean flag = true;
-			for (int currParentClasseNamePos = 0; currParentClasseNamePos < parentClassNames.length; currParentClasseNamePos++){
-				if (parentClassNames[currParentClasseNamePos].equals(exTypeRight)){
+			for (int currParentClassNamePos = 0; currParentClassNamePos < parentClassNames.length; currParentClassNamePos++){
+				if (parentClassNames[currParentClassNamePos].equals(exTypeRight)){
 					flag = false;
 					break;
 				}
 			}
 			if (flag){
 				parentClassNames = st.getParentClassesNames(exTypeRight);
-				for (int currParentClasseNamePos = 0; currParentClasseNamePos < parentClassNames.length; currParentClasseNamePos++){
-					if (parentClassNames[currParentClasseNamePos].equals(exTypeLeft)){
+				for (int currParentClassNamePos = 0; currParentClassNamePos < parentClassNames.length; currParentClassNamePos++){
+					if (parentClassNames[currParentClassNamePos].equals(exTypeLeft)){
 						flag = false;
 						break;
 					}
 				}
 				if (flag)
-					throw new Exception("\tIncompatible Type @AssignmentStatement");
+					throw new Exception("\terror: incompatible types: " + exTypeRight + " cannot be converted to " + exTypeLeft);
 			}
 		}
 
@@ -387,9 +375,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f5 -> Expression()
 	* f6 -> ";"
 	*/
-	//FIX THIS ALSO BOOLEAN && ARRAY length
 	public Object visit(ArrayAssignmentStatement n, Object argu) throws Exception{
-		///*flg*/System.out.println("ArrayAssignmentStatement");
 
 		String exType = n.f0.accept(this, argu).toString();
 		String[] parts = exType.split("\\|");
@@ -398,8 +384,31 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exType.equals("this")){
 			exType = currClassName;
 		}
-		if (!exType.equals("int[]"))
-			throw new Exception("\tExpected int[] type @ArrayAssignmentStatement");
+
+		if (exType.equals("int[]")){
+			exType = n.f5.accept(this, argu).toString();
+			parts = exType.split("\\|");
+			if (parts.length == 2)
+				exType = parts[1];
+			else if (exType.equals("this")){
+				exType = currClassName;
+			}
+			if (!exType.equals("int"))
+				throw new Exception("\terror: incompatible types: " + exType + " cannot be converted to int");
+		}
+		else if (exType.equals("boolean[]")){
+			exType = n.f5.accept(this, argu).toString();
+			parts = exType.split("\\|");
+			if (parts.length == 2)
+				exType = parts[1];
+			else if (exType.equals("this")){
+				exType = currClassName;
+			}
+			if (!exType.equals("boolean"))
+				throw new Exception("\terror: incompatible types: " + exType + " cannot be converted to boolean");
+		}
+		else
+			throw new Exception("\terror: cannot find symbol " + exType);
 
 		exType = n.f2.accept(this, argu).toString();
 		parts = exType.split("\\|");
@@ -409,17 +418,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 			exType = currClassName;
 		}
 		if (!exType.equals("int"))
-			throw new Exception("\tExpected int type @ArrayAssignmentStatement");
-
-		exType = n.f5.accept(this, argu).toString();
-		parts = exType.split("\\|");
-		if (parts.length == 2)
-			exType = parts[1];
-		else if (exType.equals("this")){
-			exType = currClassName;
-		}
-		if (!exType.equals("int"))
-			throw new Exception("\tExpected int type @ArrayAssignmentStatement");
+			throw new Exception("\terror: incompatible types: " + exType + " cannot be converted to int");
 
 		return null;
 	}
@@ -435,9 +434,8 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f6 -> Statement()
 	*/
 	public Object visit(IfStatement n, Object argu) throws Exception{
-		///*flg*/System.out.println("IfStatement");
 
-		if (n.f2.accept(this, argu)== null){
+		if (n.f2.accept(this, argu)== null)
 			return null;
 
 		String exType = n.f2.accept(this, argu).toString();
@@ -448,7 +446,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 			exType = currClassName;
 		}
 		if (!exType.equals("boolean"))
-			throw new Exception("\tExpected boolean type @IfStatement");
+			throw new Exception("\terror: incompatible types: " + exType + " cannot be converted to boolean");
 
 		n.f4.accept(this, argu);
 
@@ -466,7 +464,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f4 -> Statement()
 	*/
 	public Object visit(WhileStatement n, Object argu) throws Exception{
-		///*flg*/System.out.println("WhileStatement");
 
 		if (n.f2.accept(this, argu)== null)
 			return null;
@@ -479,7 +476,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 			exType = currClassName;
 		}
 		if (!exType.equals("boolean"))
-			throw new Exception("\tExpected boolean type @WhileStatement");
+			throw new Exception("\terror: incompatible types: " + exType + " cannot be converted to boolean");
 
 		n.f4.accept(this, argu);
 
@@ -495,7 +492,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f4 -> ";"
 	*/
 	public Object visit(PrintStatement n, Object argu) throws Exception{
-		///*flg*/System.out.println("PrintStatement");
 
 		String exType = n.f2.accept(this, argu).toString();
 		String[] parts = exType.split("\\|");
@@ -505,7 +501,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 			exType = currClassName;
 		}
 		if (!exType.equals("int"))
-			throw new Exception("\tExpected int type @PrintStatement");
+			throw new Exception("\terror: incompatible types: " + exType + " cannot be converted to int");
 		return null;
 	}
 
@@ -516,7 +512,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f2 -> Clause()
 	*/
 	public Object visit(AndExpression n, Object argu) throws Exception{
-		///*flg*/System.out.println("AndExpression");
 
 		String clauseTypeLeft = n.f0.accept(this, argu).toString();
 		String clauseTypeRight = n.f2.accept(this, argu).toString();
@@ -533,8 +528,12 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (clauseTypeRight.equals("this")){
 			clauseTypeRight = currClassName;
 		}
-		if (!clauseTypeLeft.equals("boolean") || !clauseTypeRight.equals("boolean"))
-			throw new Exception("\tExpected boolean type @AndExpression");
+
+		if (!clauseTypeLeft.equals("boolean"))
+			throw new Exception("\terror: incompatible types: " + clauseTypeLeft + " cannot be converted to boolean");
+
+		if (!clauseTypeRight.equals("boolean"))
+			throw new Exception("\terror: incompatible types: " + clauseTypeRight + " cannot be converted to boolean");
 
 		return "boolean";
 	}
@@ -546,7 +545,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f2 -> PrimaryExpression()
 	*/
 	public Object visit(CompareExpression n, Object argu) throws Exception{
-		///*flg*/System.out.println("CompareExpression");
 
 		String exTypeLeft = n.f0.accept(this, argu).toString();
 		String exTypeRight = n.f2.accept(this, argu).toString();
@@ -563,8 +561,12 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exTypeRight.equals("this")){
 			exTypeRight = currClassName;
 		}
-		if (!exTypeLeft.equals("int") || !exTypeRight.equals("int"))
-			throw new Exception("\tExpected int type @CompareExpression");
+
+		if (!exTypeLeft.equals("int"))
+			throw new Exception("\terror: incompatible types: " + exTypeLeft + " cannot be converted to int");
+
+		if (!exTypeRight.equals("int"))
+			throw new Exception("\terror: incompatible types: " + exTypeRight + " cannot be converted to int");
 
 		return "boolean";
 	}
@@ -576,7 +578,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f2 -> PrimaryExpression()
 	*/
 	public Object visit(PlusExpression n, Object argu) throws Exception{
-		///*flg*/System.out.println("PlusExpression");
 
 		String exTypeLeft = n.f0.accept(this, argu).toString();
 		String exTypeRight = n.f2.accept(this, argu).toString();
@@ -593,8 +594,12 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exTypeRight.equals("this")){
 			exTypeRight = currClassName;
 		}
-		if (!exTypeLeft.equals("int") || !exTypeRight.equals("int"))
-			throw new Exception("\tExpected int type @PlusExpression");
+
+		if (!exTypeLeft.equals("int"))
+			throw new Exception("\terror: incompatible types: " + exTypeLeft + " cannot be converted to int");
+
+		if (!exTypeRight.equals("int"))
+			throw new Exception("\terror: incompatible types: " + exTypeRight + " cannot be converted to int");
 
 		return "int";
 	}
@@ -606,7 +611,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f2 -> PrimaryExpression()
 	*/
 	public Object visit(MinusExpression n, Object argu) throws Exception{
-		///*flg*/System.out.println("MinusExpression");
 
 		String exTypeLeft = n.f0.accept(this, argu).toString();
 		String exTypeRight = n.f2.accept(this, argu).toString();
@@ -623,8 +627,12 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exTypeRight.equals("this")){
 			exTypeRight = currClassName;
 		}
-		if (!exTypeLeft.equals("int") || !exTypeRight.equals("int"))
-			throw new Exception("\tExpected int type @MinusExpression, got " + n.f2.accept(this, argu).toString());
+
+		if (!exTypeLeft.equals("int"))
+			throw new Exception("\terror: incompatible types: " + exTypeLeft + " cannot be converted to int");
+
+		if (!exTypeRight.equals("int"))
+			throw new Exception("\terror: incompatible types: " + exTypeRight + " cannot be converted to int");
 
 		return "int";
 	}
@@ -636,7 +644,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f2 -> PrimaryExpression()
 	*/
 	public Object visit(TimesExpression n, Object argu) throws Exception{
-		///*flg*/System.out.println("TimesExpression");
 
 		String exTypeLeft = n.f0.accept(this, argu).toString();
 		String exTypeRight = n.f2.accept(this, argu).toString();
@@ -653,8 +660,12 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exTypeRight.equals("this")){
 			exTypeRight = currClassName;
 		}
-		if (!exTypeLeft.equals("int") || !exTypeRight.equals("int"))
-			throw new Exception("\tExpected int type @TimesExpression");
+
+		if (!exTypeLeft.equals("int"))
+			throw new Exception("\terror: incompatible types: " + exTypeLeft + " cannot be converted to int");
+
+		if (!exTypeRight.equals("int"))
+			throw new Exception("\terror: incompatible types: " + exTypeRight + " cannot be converted to int");
 
 		return "int";
 	}
@@ -667,7 +678,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f3 -> "]"
 	*/
 	public Object visit(ArrayLookup n, Object argu) throws Exception{
-		///*flg*/System.out.println("ArrayLookup");
 
 		String exTypeLeft = n.f0.accept(this, argu).toString();
 		String exTypeRight = n.f2.accept(this, argu).toString();
@@ -686,10 +696,12 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exTypeRight.equals("this")){
 			exTypeRight = currClassName;
 		}
+
 		if (!exTypeLeft.equals("int[]"))
-			throw new Exception("\tExpected int[] type @ArrayLookup");
-		if (!exTypeRight.toString().equals("int"))
-			throw new Exception("\tExpected int type @ArrayLookup");
+			throw new Exception("\terror: incompatible types: " + exTypeLeft + " cannot be converted to int[]");
+
+		if (!exTypeRight.equals("int"))
+			throw new Exception("\terror: incompatible types: " + exTypeRight + " cannot be converted to int");
 
 		return "int";
 	}
@@ -701,7 +713,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f2 -> "length"
 	*/
 	public Object visit(ArrayLength n, Object argu) throws Exception{
-		///*flg*/System.out.println("ArrayLength");
 
 		String exType = n.f0.accept(this, argu).toString();
 		String[] parts = exType.split("\\|");
@@ -710,9 +721,8 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 		else if (exType.equals("this")){
 			exType = currClassName;
 		}
-		if (!exType.equals("int[]"))
-			throw new Exception("\tExpected int[] type @ArrayLength");
-
+		if ( !exType.equals("int[]") || !exType.equals("boolean[]"))
+			throw new Exception("\terror: incompatible types: " + exType + " cannot be converted to int[] or boolean[]");
 		return "int";
 	}
 
@@ -726,7 +736,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f5 -> ")"
 	*/
 	public Object visit(MessageSend n, Object argu) throws Exception{
-		///*flg*/System.out.println("MessageSend");
 
 		String exType = n.f0.accept(this, argu).toString();
 		String[] parts = exType.split("\\|");
@@ -738,42 +747,39 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 
 		String idName = n.f2.accept(this, null).toString();
 		if (exType.equals("int") || exType.equals("int[]") || exType.equals("boolean") || exType.equals("boolean[]"))
-			throw new Exception("\tExpected a class name type @MessageSend");
+			throw new Exception("\terror: class expected");
 
 		Hashtable<String, ClassInfo> stClasses = st.getClasses();
 		if (stClasses.get(exType) == null)
-			throw new Exception("\tMissing class Declaration @MessageSend " + exType + " " + idName);
+			throw new Exception("\terror: cannot find symbol " + idName);
 
 		Hashtable<String, MethodInfo> stMethods = st.getMethods();
 		MethodInfo currMethod = stMethods.get(exType + "." + idName);
 		if (currMethod == null){
 			String[] parentClassNames = st.getParentClassesNames(exType);
 			boolean flag = true;
-			for (int currParentClasseNamePos = 0; currParentClasseNamePos < parentClassNames.length; currParentClasseNamePos++){
-				currMethod = stMethods.get(parentClassNames[currParentClasseNamePos] + "." + idName);
+			for (int currParentClassNamePos = 0; currParentClassNamePos < parentClassNames.length; currParentClassNamePos++){
+				currMethod = stMethods.get(parentClassNames[currParentClassNamePos] + "." + idName);
 				if (currMethod != null){
 					flag = false;
 					break;
 				}
 			}
 			if (flag)
-				throw new Exception("\tFind a good name @MessageSend " + exType);
+				throw new Exception("\terror: cannot find symbol " + idName);
 		}
 
 		if (n.f4.present()){
 			String exList = n.f4.accept(this, argu).toString();
 			parts = exList.split(",");
 			int totalPars = currMethod.parNames.length;
-			/// do the same smqhere else
 			if (currMethod.parTypes == null){
 				if (parts != null)
-					throw new Exception("\tWrong number of arguments @MessageSend");
+					throw new Exception("\terror: method " + idName + " in class " + exType + " cannot be applied to given types");
 			}
 			else{
-				if (parts == null)
-					throw new Exception("\tWrong number of arguments @MessageSend");
-				else if (parts.length != currMethod.parTypes.length)
-					throw new Exception("\tWrong number of arguments @MessageSend");
+				if ( (parts == null) || (parts.length != currMethod.parTypes.length))
+					throw new Exception("\terror: method " + idName + " in class " + exType + " cannot be applied to given types");
 			}
 
 			for(int currExPos = 0; currExPos < parts.length; currExPos++){
@@ -787,20 +793,19 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 				if (!currExType.equals(currMethod.parTypes[currExPos])){
 					/* Then we should check if the current type has same types from inheritance */
 					String[] parentClassNames = st.getParentClassesNames(currExType);
-					// apply this kai sta ypoloipa
 					boolean flag = true;
-					for (int currParentClasseNamePos = 0; currParentClasseNamePos < parentClassNames.length; currParentClasseNamePos++){
-						if (parentClassNames[currParentClasseNamePos].equals(currMethod.parTypes[currExPos]))
+					for (int currParentClassNamePos = 0; currParentClassNamePos < parentClassNames.length; currParentClassNamePos++){
+						if (parentClassNames[currParentClassNamePos].equals(currMethod.parTypes[currExPos]))
 							flag = false;
 					}
 					if (flag)
-						throw new Exception("\tFind a good name @MessageSend " + currExType + " " + currMethod.parTypes[currExPos]);
+						throw new Exception("\terror: incompatible types: " + currExType + " cannot be converted to " + currMethod.parTypes[currExPos]);
 				}
 			}
 		}
 
 		if (currMethod.type == null)
-			throw new Exception("\tCan not return null type @MessageSend");
+			throw new Exception("\terror: incompatible types: unexpected return value");
 
 		return currMethod.type;
 	}
@@ -811,7 +816,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f1 -> ExpressionTail()
 	*/
 	public Object visit(ExpressionList n, Object argu) throws Exception{
-		///*flg*/System.out.println("ExpressionList");
 
 		Object currEx = n.f0.accept(this, argu);
 		Object currExTail = n.f1.accept(this, argu);
@@ -828,7 +832,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f0 -> ( ExpressionTerm() )*
 	*/
     public Object visit(ExpressionTail n, Object argu) throws Exception{
-		///*flg*/System.out.println("ExpressionTail");
 
 		int totalExprs = n.f0.size();
 		String currExTail = "";
@@ -845,7 +848,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f1 -> Expression()
 	*/
 	public Object visit(ExpressionTerm n, Object argu) throws Exception{
-		///*flg*/System.out.println("ExpressionTerm" );
 		return n.f1.accept(this, argu);
 	}
 
@@ -854,7 +856,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f0 -> <INTEGER_LITERAL>
 	*/
 	public Object visit(IntegerLiteral n, Object argu) throws Exception{
-		///*flg*/System.out.println("IntegerLiteral " + n.f0.toString());
 		return "int";
 	}
 
@@ -879,7 +880,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f0 -> <IDENTIFIER>
 	*/
 	public String visit(Identifier n, Object argu) throws Exception{
-		///*flg*/System.out.println("Identifier (" + n.f0.toString() +")");
+
 		if (argu != null)
 			return n.f0.toString() + "|" + st.getVarType(argu.toString(), n.f0.toString());
 		return n.f0.toString();
@@ -902,17 +903,16 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f4 -> "]"
 	*/
 	public Object visit(BooleanArrayAllocationExpression n, Object argu) throws Exception{
-		///*flg*/System.out.println("BooleanArrayAllocationExpression");
 
 		String exType = n.f3.accept(this, argu).toString();
-		String[] parts = exType.split("\\|"); //everywhere the same |
+		String[] parts = exType.split("\\|");
 		if (parts.length == 2)
 			exType = parts[1];
 		else if (exType.equals("this")){
 			exType = currClassName;
 		}
-		if (exType.equals("boolean"))
-			throw new Exception("\tExpected int type @BooleanArrayAllocationExpression");
+		if (!exType.equals("int"))
+			throw new Exception("\terror: incompatible types: " + exType + " cannot be converted to int");
 		return null;
 	}
 
@@ -925,7 +925,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f4 -> "]"
 	*/
 	public Object visit(IntegerArrayAllocationExpression n, Object argu) throws Exception{
-		///*flg*/System.out.println("IntegerArrayAllocationExpression");
 
 		String exType = n.f3.accept(this, argu).toString();
 		String[] parts = exType.split("\\|");
@@ -935,7 +934,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 			exType = currClassName;
 		}
 		if (!exType.equals("int"))
-			throw new Exception("\tExpected int type @IntegerArrayAllocationExpression, got "+ exType);
+			throw new Exception("\terror: incompatible types: " + exType + " cannot be converted to int");
 		return null;
 	}
 
@@ -947,13 +946,13 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f3 -> ")"
 	*/
 	public Object visit(AllocationExpression n, Object argu) throws Exception{
-		///*flg*/System.out.println("AllocationExpression");
 
 		String idName = n.f1.accept(this, null).toString();
 		Hashtable<String, ClassInfo> stClasses = st.getClasses();
 		ClassInfo currClass = stClasses.get(idName);
 		if (currClass == null)
-			throw new Exception("\tMissing Declaration @AllocationExpression: " + idName);
+			throw new Exception("\terror: cannot find symbol " + idName);
+
 		return idName;
 	}
 
@@ -963,7 +962,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f1 -> Clause()
 	*/
 	public Object visit(NotExpression n, Object argu) throws Exception{
-		///*flg*/System.out.println("NotExpression");
 
 		if (n.f1.accept(this, argu)== null)
 			return null;
@@ -976,7 +974,7 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 			clauseType = currClassName;
 		}
 		if (!clauseType.equals("boolean"))
-			throw new Exception("\tExpected boolean type @NotExpression");
+			throw new Exception("\terror: incompatible types: " + clauseType + " cannot be converted to boolean");
 		return "boolean";
 	}
 
@@ -987,7 +985,6 @@ public class TypeCheckVisitor extends GJDepthFirst<Object, Object>{
 	* f2 -> ")"
 	*/
 	public Object visit(BracketExpression n, Object argu) throws Exception{
-		///*flg*/System.out.println("BracketExpression");
 		return n.f1.accept(this, argu);
 	}
 }

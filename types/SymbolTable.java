@@ -24,7 +24,7 @@ public class SymbolTable {
 	}
 
 	public String getVarType(String idName, String varName) throws Exception{
-		///*flg*/System.out.println("getVarType("+ idName +","+ varName+")");
+
 		MethodInfo currMethod = stMethods.get(idName);
 		if (currMethod != null){
 
@@ -62,7 +62,7 @@ public class SymbolTable {
 					return getVarType(parentClassNames[currParentClasseNamePos], varName);
 				}
 			}
-			throw new Exception("\t(a) Variable does not exist: " + idName + "." + varName);
+			throw new Exception("\terror: cannot find symbol " + varName);
 		}
 
 		ClassInfo currClass = stClasses.get(idName);
@@ -72,14 +72,14 @@ public class SymbolTable {
 				if (currClass.varNames[currVar].equals(varName))
 					return currClass.varTypes[currVar];
 			}
-			throw new Exception("\t(b) Variable does not exist: " + idName + "." + varName);
+			throw new Exception("\terror: cannot find symbol " + varName);
 		}
-		throw new Exception("\t(c) Variable does not exist: " + idName + "." + varName);
+		throw new Exception("\terror: cannot find symbol " + varName);
 	}
 
 
 	public String[] getParentClassesNames(String className){
-		///*flg*/System.out.println("getParentClassesNames("+ className+")");
+
 		String parentClassNamesList = "";
 		ClassInfo currClass = stClasses.get(className);
 		if (currClass != null){
@@ -90,7 +90,6 @@ public class SymbolTable {
 					break;
 			}
 		}
-		///*flg*/System.out.println("will return " + parentClassNamesList);
 		return parentClassNamesList.split("\\|");
 	}
 
